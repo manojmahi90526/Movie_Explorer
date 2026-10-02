@@ -17,6 +17,7 @@ const MoviesPage = () => {
   const [movies, setMovies] = useState([]);
   const [platforms, setPlatforms] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [errorMsg, setErrorMsg] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedGenre, setSelectedGenre] = useState('All');
   const [selectedStatus, setSelectedStatus] = useState('All');
@@ -52,12 +53,14 @@ const MoviesPage = () => {
   // ── Fetch My Collection ────────────────────────────────────────────────
   const loadMovies = async () => {
     setLoading(true);
+    setErrorMsg(null);
     try {
       const params = { search: searchQuery, genre: selectedGenre, status: selectedStatus, platform: selectedPlatform, sort: sortOption };
       const res = await fetchMovies(params);
       if (res.data.success) setMovies(res.data.data);
     } catch (err) {
       console.error('Failed to fetch movies', err);
+      setErrorMsg(err.response?.data?.message || err.message || 'Failed to connect to backend API.');
     } finally {
       setLoading(false);
     }
@@ -187,6 +190,17 @@ const MoviesPage = () => {
             <div style={{ minHeight: '300px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '12px' }}>
               <RefreshCw size={28} className="animate-pulse-subtle" color="#6366f1" />
               <span style={{ color: '#94a3b8', fontSize: '0.95rem' }}>Loading cinema database...</span>
+            </div>
+          ) : errorMsg ? (
+            <div className="glass-panel" style={{ padding: '60px 20px', textAlign: 'center', borderRadius: 'var(--radius-lg)', border: '1px solid rgba(239,68,68,0.3)' }}>
+              <Database size={48} color="#ef4444" style={{ margin: '0 auto 16px auto', display: 'block' }} />
+              <h3 style={{ fontSize: '1.4rem', color: '#f8fafc', marginBottom: '8px' }}>Database Connection Error</h3>
+              <p style={{ color: '#ef4444', maxWidth: '550px', margin: '0 auto 20px auto', fontSize: '0.95rem', fontWeight: 600 }}>
+                {errorMsg}
+              </p>
+              <p style={{ color: '#94a3b8', maxWidth: '450px', margin: '0 auto 20px auto', fontSize: '0.85rem' }}>
+                Please check the Render server logs or ensure your MongoDB URI is correctly configured in your environment variables.
+              </p>
             </div>
           ) : movies.length > 0 ? (
             <div className="movies-grid">
