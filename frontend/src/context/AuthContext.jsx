@@ -30,7 +30,7 @@ export const AuthProvider = ({ children }) => {
     } catch (err) {
       return {
         success: false,
-        message: err.response?.data?.message || 'Login failed. Please check credentials.',
+        message: err.response?.data?.message || `Login failed: ${err.message}`,
       };
     }
   };
