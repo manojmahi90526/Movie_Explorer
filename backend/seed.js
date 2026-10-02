@@ -329,7 +329,7 @@ export const seedDatabase = async (force = false) => {
       },
       {
         name: 'Nikhil Siddhartha',
-        image: 'https://wsrv.nl/?url=https://upload.wikimedia.org/wikipedia/commons/thumb/7/75/Nikhil_Siddhartha_at_Karthikeya_2_success_meet.jpg/800px-Nikhil_Siddhartha_at_Karthikeya_2_success_meet.jpg',
+        image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSkAQ9kJcAmFI1nepg91NWbKxrLrLDYsj7fg_rgsgrRVw&s=10',
         bio: 'Energetic star recognized for content-driven thrillers and mythological adventures including Karthikeya 2, Swamy Ra Ra, and 18 Pages.',
         dateOfBirth: 'June 1, 1985',
         debutYear: 2007,
