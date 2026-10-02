@@ -274,7 +274,7 @@ export const seedDatabase = async (force = false) => {
       },
       {
         name: 'Adivi Sesh',
-        image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Adivi_Sesh_promoting_Major.jpg/800px-Adivi_Sesh_promoting_Major.jpg',
+        image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTHRahTv9LsNSsrCzqv2dtyu3DU3wUlL5_mKjlYRMqIvWwkUT9PNgtf2cxAMEp99Wj-MIIMn-9aW-wXGLjLs0x_MEFZWbQ18w3Ze1ZhvpIO&s=10',
         bio: 'The mastermind of modern Indian thrillers and gripping biographical cinema, renowned for penning and starring in Kshanam, Goodachari, Major, and HIT 2.',
         dateOfBirth: 'December 17, 1985',
         debutYear: 2010,
