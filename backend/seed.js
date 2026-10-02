@@ -252,7 +252,7 @@ export const seedDatabase = async (force = false) => {
       },
       {
         name: 'Nagarjuna Akkineni',
-        image: 'https://wsrv.nl/?url=https://upload.wikimedia.org/wikipedia/commons/thumb/e/ed/Nagarjuna_at_Manam_Audio_Launch.jpg/800px-Nagarjuna_at_Manam_Audio_Launch.jpg',
+        image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR73mQ2k0iPFohEek6NFOfiRLw_zp2SpC6_5XeFXnhU0g&s=10',
         bio: '"King" Nagarjuna is the timeless trendsetter of Telugu cinema, celebrated for experimenting across diverse genres with Shiva, Annamayya, and Manam.',
         dateOfBirth: 'August 29, 1959',
         debutYear: 1986,
