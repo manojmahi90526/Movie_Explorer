@@ -3,29 +3,13 @@ import Navbar from './components/Navbar';
 import MoviesPage from './pages/MoviesPage';
 import ActorsPage from './pages/ActorsPage';
 import AdminDashboard from './pages/AdminDashboard';
-import LoginPage from './pages/LoginPage';
+
 import SchemaModal from './components/SchemaModal';
-import { Film, Users, Shield, Heart, Sparkles, Database } from 'lucide-react';
-import { useAuth } from './context/AuthContext';
+import { Database } from 'lucide-react';
 
 function App() {
-  const { user, loading } = useAuth();
   const [activeTab, setActiveTab] = useState('movies');
   const [isSchemaModalOpen, setIsSchemaModalOpen] = useState(false);
-
-  if (loading) {
-    return <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff' }}>Loading...</div>;
-  }
-
-  // Force authentication before showing the main application
-  if (!user) {
-    return (
-      <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', background: '#05070f' }}>
-        <LoginPage onLoginSuccess={() => setActiveTab('movies')} />
-      </div>
-    );
-  }
-
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       {/* Sticky Header Navbar */}

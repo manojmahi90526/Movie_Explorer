@@ -541,7 +541,7 @@ h1, h2, h3, h4, h5, h6 {
    ========================================================================== */
 .movies-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 24px;
   margin-bottom: 28px;
 }

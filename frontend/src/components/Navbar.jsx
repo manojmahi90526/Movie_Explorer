@@ -1,9 +1,7 @@
 import React from 'react';
-import { Film, Users, Shield, LogIn, LogOut, Sparkles, Database } from 'lucide-react';
-import { useAuth } from '../context/AuthContext';
+import { Film, Users, Database } from 'lucide-react';
 
 const Navbar = ({ activeTab, setActiveTab, onOpenSchemaModal }) => {
-  const { user, isAdmin, logout, quickDemoLogin } = useAuth();
 
   return (
     <header
@@ -146,69 +144,6 @@ const Navbar = ({ activeTab, setActiveTab, onOpenSchemaModal }) => {
           </button>
         </nav>
 
-        {/* Auth / Recruiter Quick Switcher */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          {user ? (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-              <div
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px',
-                  background: 'rgba(255, 255, 255, 0.05)',
-                  padding: '6px 14px',
-                  borderRadius: 'var(--radius-full)',
-                  border: '1px solid var(--border-subtle)',
-                }}
-              >
-                <div
-                  style={{
-                    width: '8px',
-                    height: '8px',
-                    borderRadius: '50%',
-                    background: isAdmin ? '#ff0055' : '#00f59b',
-                    boxShadow: isAdmin ? '0 0 10px #ff0055' : '0 0 10px #00f59b',
-                  }}
-                />
-                <span style={{ fontSize: '0.85rem', fontWeight: 600 }}>{user.name}</span>
-                <span
-                  style={{
-                    fontSize: '0.72rem',
-                    padding: '2px 8px',
-                    borderRadius: 'var(--radius-full)',
-                    background: isAdmin ? 'rgba(255, 0, 85, 0.2)' : 'rgba(0, 245, 155, 0.2)',
-                    color: isAdmin ? '#ff4d88' : '#34d399',
-                    fontWeight: 700,
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.04em',
-                  }}
-                >
-                  {user.role}
-                </span>
-              </div>
-              <button
-                onClick={logout}
-                className="btn btn-secondary btn-sm"
-                title="Logout"
-                style={{ padding: '8px 12px', borderRadius: 'var(--radius-sm)' }}
-              >
-                <LogOut size={16} />
-              </button>
-            </div>
-          ) : (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-
-              <button
-                onClick={() => setActiveTab('login')}
-                className="btn btn-secondary btn-sm"
-                style={{ fontSize: '0.85rem' }}
-              >
-                <LogIn size={15} />
-                <span>Sign In</span>
-              </button>
-            </div>
-          )}
-        </div>
       </div>
     </header>
   );
