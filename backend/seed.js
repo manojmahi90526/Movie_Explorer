@@ -187,7 +187,7 @@ export const seedDatabase = async (force = false) => {
       },
       {
         name: 'Pawan Kalyan',
-        image: 'https://wsrv.nl/?url=https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/Pawan_Kalyan_in_2024.jpg/800px-Pawan_Kalyan_in_2024.jpg',
+        image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQyoefD91pND5xdlQ_GVHQtgUXORpTIUW3qwmbRFwqYCA&s=10',
         bio: '"Power Star" Pawan Kalyan is a cultural phenomenon, celebrated film icon, and political leader with an unparalleled, devoted fan following across the globe.',
         dateOfBirth: 'September 2, 1971',
         debutYear: 1996,
