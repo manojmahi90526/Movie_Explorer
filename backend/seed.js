@@ -318,7 +318,7 @@ export const seedDatabase = async (force = false) => {
       },
       {
         name: 'Rana Daggubati',
-        image: 'https://wsrv.nl/?url=https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/Rana_Daggubati_at_Rana_Naidu_trailer_launch.jpg/800px-Rana_Daggubati_at_Rana_Naidu_trailer_launch.jpg',
+        image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTCHwFE5KM-AyJR0FokY9zQRvge8ZPHXoXNtCEj7JsZBw&s',
         bio: 'Pan-Indian heavyweight known for playing the fierce Bhallaladeva in Baahubali, Leader, Ghazi Attack, and high-octane action drama.',
         dateOfBirth: 'December 14, 1984',
         debutYear: 2010,
