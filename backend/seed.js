@@ -92,7 +92,7 @@ export const seedDatabase = async (force = false) => {
     const actors = await Actor.insertMany([
       {
         name: 'Prabhas',
-        image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/22/Prabhas_by_Gage_Skidmore.jpg/800px-Prabhas_by_Gage_Skidmore.jpg',
+        image: 'https://wsrv.nl/?url=https://upload.wikimedia.org/wikipedia/commons/thumb/2/22/Prabhas_by_Gage_Skidmore.jpg/800px-Prabhas_by_Gage_Skidmore.jpg',
         bio: 'The Pan-India Rebel Star celebrated globally for bringing Indian cinema to the international stage with Baahubali, Kalki 2898 AD, and Salaar.',
         dateOfBirth: 'October 23, 1979',
         debutYear: 2002,
@@ -108,7 +108,7 @@ export const seedDatabase = async (force = false) => {
       },
       {
         name: 'NTR Jr.',
-        image: 'https://upload.wikimedia.org/wikipedia/commons/f/f1/NTR_Jr._%282026%29.jpg',
+        image: 'https://wsrv.nl/?url=https://upload.wikimedia.org/wikipedia/commons/f/f1/NTR_Jr._%282026%29.jpg',
         bio: 'The "Man of Masses" and Young Tiger of Telugu cinema, globally acclaimed for his electrifying dancing, emotional acting depth, and iconic role in RRR.',
         dateOfBirth: 'May 20, 1983',
         debutYear: 2001,
@@ -124,7 +124,7 @@ export const seedDatabase = async (force = false) => {
       },
       {
         name: 'Ram Charan',
-        image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Ram_Charan_at_Game_Changer_trailer_launch.jpg/800px-Ram_Charan_at_Game_Changer_trailer_launch.jpg',
+        image: 'https://wsrv.nl/?url=https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Ram_Charan_at_Game_Changer_trailer_launch.jpg/800px-Ram_Charan_at_Game_Changer_trailer_launch.jpg',
         bio: 'Global Star and Mega Power Star of Tollywood, revered for his commanding screen presence in monumental blockbusters like RRR, Rangasthalam, and Magadheera.',
         dateOfBirth: 'March 27, 1985',
         debutYear: 2007,
@@ -140,7 +140,7 @@ export const seedDatabase = async (force = false) => {
       },
       {
         name: 'Allu Arjun',
-        image: 'https://upload.wikimedia.org/wikipedia/commons/0/09/Allu_Arjun_at_Pushpa_2_The_Rule_meet.jpg',
+        image: 'https://wsrv.nl/?url=https://upload.wikimedia.org/wikipedia/commons/0/09/Allu_Arjun_at_Pushpa_2_The_Rule_meet.jpg',
         bio: 'The National Award-winning "Icon Star" known for his unmatched style, magnetic dance moves, and monumental worldwide popularity with Pushpa.',
         dateOfBirth: 'April 8, 1982',
         debutYear: 2003,
@@ -156,7 +156,7 @@ export const seedDatabase = async (force = false) => {
       },
       {
         name: 'Mahesh Babu',
-        image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/Mahesh_Babu_in_EMK.jpg/800px-Mahesh_Babu_in_EMK.jpg',
+        image: 'https://wsrv.nl/?url=https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/Mahesh_Babu_in_EMK.jpg/800px-Mahesh_Babu_in_EMK.jpg',
         bio: '"Superstar" Mahesh Babu is one of the most charismatic and commercially successful icons in Indian cinema history with evergreen hits like Pokiri and Athadu.',
         dateOfBirth: 'August 9, 1975',
         debutYear: 1999,
@@ -172,7 +172,7 @@ export const seedDatabase = async (force = false) => {
       },
       {
         name: 'Nani',
-        image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Nani_at_Dasara_promotions.jpg/800px-Nani_at_Dasara_promotions.jpg',
+        image: 'https://wsrv.nl/?url=https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Nani_at_Dasara_promotions.jpg/800px-Nani_at_Dasara_promotions.jpg',
         bio: '"Natural Star" Nani is celebrated for his effortless realism, versatile performances, and passionate dedication to groundbreaking cinema like Jersey and Dasara.',
         dateOfBirth: 'February 24, 1984',
         debutYear: 2008,
@@ -187,7 +187,7 @@ export const seedDatabase = async (force = false) => {
       },
       {
         name: 'Pawan Kalyan',
-        image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/Pawan_Kalyan_in_2024.jpg/800px-Pawan_Kalyan_in_2024.jpg',
+        image: 'https://wsrv.nl/?url=https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/Pawan_Kalyan_in_2024.jpg/800px-Pawan_Kalyan_in_2024.jpg',
         bio: '"Power Star" Pawan Kalyan is a cultural phenomenon, celebrated film icon, and political leader with an unparalleled, devoted fan following across the globe.',
         dateOfBirth: 'September 2, 1971',
         debutYear: 1996,
@@ -219,7 +219,7 @@ export const seedDatabase = async (force = false) => {
       },
       {
         name: 'Vijay Deverakonda',
-        image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Vijay_Deverakonda_promoting_Liger.jpg/800px-Vijay_Deverakonda_promoting_Liger.jpg',
+        image: 'https://wsrv.nl/?url=https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Vijay_Deverakonda_promoting_Liger.jpg/800px-Vijay_Deverakonda_promoting_Liger.jpg',
         bio: 'The charismatic "Rowdy Star" who took Indian cinema by storm with groundbreaking performances in Arjun Reddy, Geetha Govindam, and Pelli Choopulu.',
         dateOfBirth: 'May 9, 1989',
         debutYear: 2011,
@@ -230,7 +230,7 @@ export const seedDatabase = async (force = false) => {
       },
       {
         name: 'Ravi Teja',
-        image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/Ravi_Teja_at_Dhamaka_success_meet.jpg/800px-Ravi_Teja_at_Dhamaka_success_meet.jpg',
+        image: 'https://wsrv.nl/?url=https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/Ravi_Teja_at_Dhamaka_success_meet.jpg/800px-Ravi_Teja_at_Dhamaka_success_meet.jpg',
         bio: '"Mass Maharaja" Ravi Teja is Tollywood’s embodiment of explosive energy, impeccable comic timing, and relentless resilience with blockbusters like Vikramarkudu.',
         dateOfBirth: 'January 26, 1968',
         debutYear: 1990,
@@ -241,7 +241,7 @@ export const seedDatabase = async (force = false) => {
       },
       {
         name: 'Venkatesh Daggubati',
-        image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/07/Venkatesh_at_Rana_Naidu_event.jpg/800px-Venkatesh_at_Rana_Naidu_event.jpg',
+        image: 'https://wsrv.nl/?url=https://upload.wikimedia.org/wikipedia/commons/thumb/0/07/Venkatesh_at_Rana_Naidu_event.jpg/800px-Venkatesh_at_Rana_Naidu_event.jpg',
         bio: '"Victory" Venkatesh is the king of family entertainment, beloved for heartwarming drama, evergreen humor, and intense action across four decades.',
         dateOfBirth: 'December 13, 1960',
         debutYear: 1986,
@@ -252,7 +252,7 @@ export const seedDatabase = async (force = false) => {
       },
       {
         name: 'Nagarjuna Akkineni',
-        image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/ed/Nagarjuna_at_Manam_Audio_Launch.jpg/800px-Nagarjuna_at_Manam_Audio_Launch.jpg',
+        image: 'https://wsrv.nl/?url=https://upload.wikimedia.org/wikipedia/commons/thumb/e/ed/Nagarjuna_at_Manam_Audio_Launch.jpg/800px-Nagarjuna_at_Manam_Audio_Launch.jpg',
         bio: '"King" Nagarjuna is the timeless trendsetter of Telugu cinema, celebrated for experimenting across diverse genres with Shiva, Annamayya, and Manam.',
         dateOfBirth: 'August 29, 1959',
         debutYear: 1986,
@@ -263,7 +263,7 @@ export const seedDatabase = async (force = false) => {
       },
       {
         name: 'Nandamuri Balakrishna',
-        image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Nandamuri_Balakrishna_at_Unstoppable.jpg/800px-Nandamuri_Balakrishna_at_Unstoppable.jpg',
+        image: 'https://wsrv.nl/?url=https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Nandamuri_Balakrishna_at_Unstoppable.jpg/800px-Nandamuri_Balakrishna_at_Unstoppable.jpg',
         bio: '"Natasimham" and God of Masses Nandamuri Balakrishna is iconic for thunderous dialogue delivery, roaring action epics, and blockbusters like Akhanda and Bhagavanth Kesari.',
         dateOfBirth: 'June 10, 1960',
         debutYear: 1974,
@@ -285,7 +285,7 @@ export const seedDatabase = async (force = false) => {
       },
       {
         name: 'Dulquer Salmaan',
-        image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8b/Dulquer_Salmaan_at_Sita_Ramam_press_meet.jpg/800px-Dulquer_Salmaan_at_Sita_Ramam_press_meet.jpg',
+        image: 'https://wsrv.nl/?url=https://upload.wikimedia.org/wikipedia/commons/thumb/8/8b/Dulquer_Salmaan_at_Sita_Ramam_press_meet.jpg/800px-Dulquer_Salmaan_at_Sita_Ramam_press_meet.jpg',
         bio: 'Pan-Indian heartthrob praised for his soulful performances in Telugu masterpieces like Sita Ramam, Mahanati, and Lucky Baskhar.',
         dateOfBirth: 'July 28, 1986',
         debutYear: 2012,
@@ -296,7 +296,7 @@ export const seedDatabase = async (force = false) => {
       },
       {
         name: 'Naveen Polishetty',
-        image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/69/Naveen_Polishetty_at_Miss_Shetty_event.jpg/800px-Naveen_Polishetty_at_Miss_Shetty_event.jpg',
+        image: 'https://wsrv.nl/?url=https://upload.wikimedia.org/wikipedia/commons/thumb/6/69/Naveen_Polishetty_at_Miss_Shetty_event.jpg/800px-Naveen_Polishetty_at_Miss_Shetty_event.jpg',
         bio: 'The comedic genius and versatile star acclaimed for breakout superhits like Agent Sai Srinivasa Athreya, Jathi Ratnalu, and Miss Shetty Mr Polishetty.',
         dateOfBirth: 'December 26, 1989',
         debutYear: 2012,
@@ -307,7 +307,7 @@ export const seedDatabase = async (force = false) => {
       },
       {
         name: 'Siddhu Jonnalagadda',
-        image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Siddhu_Jonnalagadda_at_Tillu_Square_event.jpg/800px-Siddhu_Jonnalagadda_at_Tillu_Square_event.jpg',
+        image: 'https://wsrv.nl/?url=https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Siddhu_Jonnalagadda_at_Tillu_Square_event.jpg/800px-Siddhu_Jonnalagadda_at_Tillu_Square_event.jpg',
         bio: '"Star Boy" Siddhu Jonnalagadda redefined Telugu youthful comedy and swagger with the sensational DJ Tillu and Tillu Square franchise.',
         dateOfBirth: 'February 7, 1990',
         debutYear: 2009,
@@ -318,7 +318,7 @@ export const seedDatabase = async (force = false) => {
       },
       {
         name: 'Rana Daggubati',
-        image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/Rana_Daggubati_at_Rana_Naidu_trailer_launch.jpg/800px-Rana_Daggubati_at_Rana_Naidu_trailer_launch.jpg',
+        image: 'https://wsrv.nl/?url=https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/Rana_Daggubati_at_Rana_Naidu_trailer_launch.jpg/800px-Rana_Daggubati_at_Rana_Naidu_trailer_launch.jpg',
         bio: 'Pan-Indian heavyweight known for playing the fierce Bhallaladeva in Baahubali, Leader, Ghazi Attack, and high-octane action drama.',
         dateOfBirth: 'December 14, 1984',
         debutYear: 2010,
@@ -329,7 +329,7 @@ export const seedDatabase = async (force = false) => {
       },
       {
         name: 'Nikhil Siddhartha',
-        image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/75/Nikhil_Siddhartha_at_Karthikeya_2_success_meet.jpg/800px-Nikhil_Siddhartha_at_Karthikeya_2_success_meet.jpg',
+        image: 'https://wsrv.nl/?url=https://upload.wikimedia.org/wikipedia/commons/thumb/7/75/Nikhil_Siddhartha_at_Karthikeya_2_success_meet.jpg/800px-Nikhil_Siddhartha_at_Karthikeya_2_success_meet.jpg',
         bio: 'Energetic star recognized for content-driven thrillers and mythological adventures including Karthikeya 2, Swamy Ra Ra, and 18 Pages.',
         dateOfBirth: 'June 1, 1985',
         debutYear: 2007,
@@ -340,7 +340,7 @@ export const seedDatabase = async (force = false) => {
       },
       {
         name: 'Teja Sajja',
-        image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/03/Teja_Sajja_at_HanuMan_success_meet.jpg/800px-Teja_Sajja_at_HanuMan_success_meet.jpg',
+        image: 'https://wsrv.nl/?url=https://upload.wikimedia.org/wikipedia/commons/thumb/0/03/Teja_Sajja_at_HanuMan_success_meet.jpg/800px-Teja_Sajja_at_HanuMan_success_meet.jpg',
         bio: 'Former child star turned pan-Indian superhero sensation with the historic global blockbuster Hanu-Man and upcoming epic Mirai.',
         dateOfBirth: 'August 23, 1994',
         debutYear: 1998,
