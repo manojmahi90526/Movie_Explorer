@@ -219,7 +219,7 @@ export const seedDatabase = async (force = false) => {
       },
       {
         name: 'Vijay Deverakonda',
-        image: 'https://wsrv.nl/?url=https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Vijay_Deverakonda_promoting_Liger.jpg/800px-Vijay_Deverakonda_promoting_Liger.jpg',
+        image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT8cLjFb8oYa5MrnOVtHpJGBpZMYf9J4hYl4S48j4D8iFzII5fyGBMEr-Mma5j6FpwT67yZBajo9n9DYftXYVspJyMuSWP_uNxeajEirFHM0w&s=10',
         bio: 'The charismatic "Rowdy Star" who took Indian cinema by storm with groundbreaking performances in Arjun Reddy, Geetha Govindam, and Pelli Choopulu.',
         dateOfBirth: 'May 9, 1989',
         debutYear: 2011,
