@@ -340,7 +340,7 @@ export const seedDatabase = async (force = false) => {
       },
       {
         name: 'Teja Sajja',
-        image: 'https://wsrv.nl/?url=https://upload.wikimedia.org/wikipedia/commons/thumb/0/03/Teja_Sajja_at_HanuMan_success_meet.jpg/800px-Teja_Sajja_at_HanuMan_success_meet.jpg',
+        image: 'https://upload.wikimedia.org/wikipedia/commons/b/be/Teja_Sajja_at_IIFA_Utsavam_%28cropped%29.jpg',
         bio: 'Former child star turned pan-Indian superhero sensation with the historic global blockbuster Hanu-Man and upcoming epic Mirai.',
         dateOfBirth: 'August 23, 1994',
         debutYear: 1998,
