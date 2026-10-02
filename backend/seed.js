@@ -263,7 +263,7 @@ export const seedDatabase = async (force = false) => {
       },
       {
         name: 'Nandamuri Balakrishna',
-        image: 'https://wsrv.nl/?url=https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Nandamuri_Balakrishna_at_Unstoppable.jpg/800px-Nandamuri_Balakrishna_at_Unstoppable.jpg',
+        image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQMK6Ms3aupBp0nLZweE9S9i-I_d3SClIG0uY-lJjyHTQ&s=10',
         bio: '"Natasimham" and God of Masses Nandamuri Balakrishna is iconic for thunderous dialogue delivery, roaring action epics, and blockbusters like Akhanda and Bhagavanth Kesari.',
         dateOfBirth: 'June 10, 1960',
         debutYear: 1974,
