@@ -156,7 +156,7 @@ export const seedDatabase = async (force = false) => {
       },
       {
         name: 'Mahesh Babu',
-        image: 'https://wsrv.nl/?url=https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/Mahesh_Babu_in_EMK.jpg/800px-Mahesh_Babu_in_EMK.jpg',
+        image: 'https://www.telugu360.com/wp-content/uploads/2026/02/Mahesh-Babu-5.jpg',
         bio: '"Superstar" Mahesh Babu is one of the most charismatic and commercially successful icons in Indian cinema history with evergreen hits like Pokiri and Athadu.',
         dateOfBirth: 'August 9, 1975',
         debutYear: 1999,
