@@ -230,7 +230,7 @@ export const seedDatabase = async (force = false) => {
       },
       {
         name: 'Ravi Teja',
-        image: 'https://wsrv.nl/?url=https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/Ravi_Teja_at_Dhamaka_success_meet.jpg/800px-Ravi_Teja_at_Dhamaka_success_meet.jpg',
+        image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQU_WAmsk1lPkcpys_AUwIKS3EaE5ZXV2PkH1RvoHhf8A&s',
         bio: '"Mass Maharaja" Ravi Teja is Tollywood’s embodiment of explosive energy, impeccable comic timing, and relentless resilience with blockbusters like Vikramarkudu.',
         dateOfBirth: 'January 26, 1968',
         debutYear: 1990,
