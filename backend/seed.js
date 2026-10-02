@@ -285,7 +285,7 @@ export const seedDatabase = async (force = false) => {
       },
       {
         name: 'Dulquer Salmaan',
-        image: 'https://wsrv.nl/?url=https://upload.wikimedia.org/wikipedia/commons/thumb/8/8b/Dulquer_Salmaan_at_Sita_Ramam_press_meet.jpg/800px-Dulquer_Salmaan_at_Sita_Ramam_press_meet.jpg',
+        image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:6k2NuZZB8ycDkM&s=10',
         bio: 'Pan-Indian heartthrob praised for his soulful performances in Telugu masterpieces like Sita Ramam, Mahanati, and Lucky Baskhar.',
         dateOfBirth: 'July 28, 1986',
         debutYear: 2012,
