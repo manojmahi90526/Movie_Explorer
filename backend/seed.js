@@ -172,7 +172,7 @@ export const seedDatabase = async (force = false) => {
       },
       {
         name: 'Nani',
-        image: 'https://wsrv.nl/?url=https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Nani_at_Dasara_promotions.jpg/800px-Nani_at_Dasara_promotions.jpg',
+        image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRuCvhOw4LdPekRsVd48fDbOQYIgi7JGhWG83kJn8owAA&s',
         bio: '"Natural Star" Nani is celebrated for his effortless realism, versatile performances, and passionate dedication to groundbreaking cinema like Jersey and Dasara.',
         dateOfBirth: 'February 24, 1984',
         debutYear: 2008,
