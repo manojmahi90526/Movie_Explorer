@@ -307,7 +307,7 @@ export const seedDatabase = async (force = false) => {
       },
       {
         name: 'Siddhu Jonnalagadda',
-        image: 'https://wsrv.nl/?url=https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Siddhu_Jonnalagadda_at_Tillu_Square_event.jpg/800px-Siddhu_Jonnalagadda_at_Tillu_Square_event.jpg',
+        image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:LrT_LiWcKIPdhM&s=10',
         bio: '"Star Boy" Siddhu Jonnalagadda redefined Telugu youthful comedy and swagger with the sensational DJ Tillu and Tillu Square franchise.',
         dateOfBirth: 'February 7, 1990',
         debutYear: 2009,
