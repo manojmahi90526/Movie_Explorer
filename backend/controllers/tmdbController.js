@@ -39,7 +39,7 @@ export const searchTMDb = async (req, res) => {
 
     // Run both multi-search and person-search to reliably detect actors
     const [multiData, personData] = await Promise.all([
-      tmdbFetch('/search/multi', { query: q, page: 1, language: 'te-IN' }),
+      tmdbFetch('/search/multi', { query: q, page: 1, language: 'en-US' }),
       tmdbFetch('/search/person', { query: q, page: 1 })
     ]);
 
@@ -64,7 +64,7 @@ export const searchTMDb = async (req, res) => {
     
     if (topResult) {
        // It's an actor/person search! Fetch all their movies at once.
-       const creditsData = await tmdbFetch(`/person/${topResult.id}/movie_credits`, { language: 'te-IN' });
+       const creditsData = await tmdbFetch(`/person/${topResult.id}/movie_credits`, { language: 'en-US' });
        
        let actorMovies = creditsData.cast || [];
        
@@ -93,7 +93,7 @@ export const searchTMDb = async (req, res) => {
     }
 
     // If it wasn't a person, fallback to standard movie search to handle pagination correctly
-    const movieData = await tmdbFetch('/search/movie', { query: q, page, language: 'te-IN' });
+    const movieData = await tmdbFetch('/search/movie', { query: q, page, language: 'en-US' });
 
     res.json({
       success: true,
