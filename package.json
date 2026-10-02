@@ -7,7 +7,7 @@
     "backend": "cd backend && npm run dev",
     "frontend": "cd frontend && npm run dev",
     "dev": "concurrently --kill-others \"npm run backend\" \"npm run frontend\"",
-    "build": "cd frontend && npm run build",
+    "build": "npm install --prefix frontend && npm run build --prefix frontend",
     "start": "npm run build && cd backend && npm start",
     "seed": "cd backend && npm run seed"
   },
