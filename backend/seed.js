@@ -241,7 +241,7 @@ export const seedDatabase = async (force = false) => {
       },
       {
         name: 'Venkatesh Daggubati',
-        image: 'https://wsrv.nl/?url=https://upload.wikimedia.org/wikipedia/commons/thumb/0/07/Venkatesh_at_Rana_Naidu_event.jpg/800px-Venkatesh_at_Rana_Naidu_event.jpg',
+        image: 'https://upload.wikimedia.org/wikipedia/commons/a/a2/Venkatesh_Daggubati_at_ANR_Awards.jpg',
         bio: '"Victory" Venkatesh is the king of family entertainment, beloved for heartwarming drama, evergreen humor, and intense action across four decades.',
         dateOfBirth: 'December 13, 1960',
         debutYear: 1986,
