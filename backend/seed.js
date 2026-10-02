@@ -202,7 +202,7 @@ export const seedDatabase = async (force = false) => {
       },
       {
         name: 'Chiranjeevi',
-        image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/Chiranjeevi_at_IFFI_2022.jpg/800px-Chiranjeevi_at_IFFI_2022.jpg',
+        image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTKTRTFCb6pLVqNeKJId3U1lgiJ-WJ-d0P5IDXxpCJqRn1pfXbadTePUL96V9hrtkPtuGNdHGc0D5t131-apW8I4fn9s5qSsF6yYrRrR_xJ&s=10',
         bio: '"Megastar" Chiranjeevi is the supreme titan and cultural trailblazer of modern Telugu cinema, recipient of the Padma Vibhushan and Indian Film Personality of the Year.',
         dateOfBirth: 'August 22, 1955',
         debutYear: 1978,
