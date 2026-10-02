@@ -5,7 +5,7 @@ import ActorDetailsModal from '../components/ActorDetailsModal';
 import MovieDetailsModal from '../components/MovieDetailsModal';
 import { fetchActors } from '../services/api';
 
-const ROLE_TYPES = ['All', 'Lead Actor', 'Lead Actress', 'Director & Actor', 'Supporting Actor'];
+const ROLE_TYPES = ['All', 'Lead Actor'];
 
 const ActorsPage = () => {
   const [actors, setActors] = useState([]);
