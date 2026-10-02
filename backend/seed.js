@@ -124,7 +124,7 @@ export const seedDatabase = async (force = false) => {
       },
       {
         name: 'Ram Charan',
-        image: 'https://wsrv.nl/?url=https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Ram_Charan_at_Game_Changer_trailer_launch.jpg/800px-Ram_Charan_at_Game_Changer_trailer_launch.jpg',
+        image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRyxWclvYcUaDNjp_83bLQatt_Lzt5y7VQkhlO5V-Ew8Q&s=10',
         bio: 'Global Star and Mega Power Star of Tollywood, revered for his commanding screen presence in monumental blockbusters like RRR, Rangasthalam, and Magadheera.',
         dateOfBirth: 'March 27, 1985',
         debutYear: 2007,
