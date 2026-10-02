@@ -1,0 +1,17 @@
+{
+  "name": "cinesphere-movies-explorer",
+  "version": "1.0.0",
+  "description": "CineSphere - MERN Stack Movie & Cast Explorer for Placement Drives",
+  "scripts": {
+    "install:all": "cd backend && npm install && cd ../frontend && npm install",
+    "backend": "cd backend && npm run dev",
+    "frontend": "cd frontend && npm run dev",
+    "dev": "concurrently --kill-others \"npm run backend\" \"npm run frontend\"",
+    "build": "cd frontend && npm run build",
+    "start": "npm run build && cd backend && npm start",
+    "seed": "cd backend && npm run seed"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.4"
+  }
+}
