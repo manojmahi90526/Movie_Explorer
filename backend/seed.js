@@ -92,7 +92,7 @@ export const seedDatabase = async (force = false) => {
     const actors = await Actor.insertMany([
       {
         name: 'Prabhas',
-        image: 'https://wsrv.nl/?url=https://upload.wikimedia.org/wikipedia/commons/thumb/2/22/Prabhas_by_Gage_Skidmore.jpg/800px-Prabhas_by_Gage_Skidmore.jpg',
+        image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRTa3QMsTcwLR_pT0-pK0daYYVv_n9mHyMkV0Ky0tpeTw&s=10',
         bio: 'The Pan-India Rebel Star celebrated globally for bringing Indian cinema to the international stage with Baahubali, Kalki 2898 AD, and Salaar.',
         dateOfBirth: 'October 23, 1979',
         debutYear: 2002,
