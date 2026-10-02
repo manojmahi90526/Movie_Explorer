@@ -296,7 +296,7 @@ export const seedDatabase = async (force = false) => {
       },
       {
         name: 'Naveen Polishetty',
-        image: 'https://wsrv.nl/?url=https://upload.wikimedia.org/wikipedia/commons/thumb/6/69/Naveen_Polishetty_at_Miss_Shetty_event.jpg/800px-Naveen_Polishetty_at_Miss_Shetty_event.jpg',
+        image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTGWGNbIXQRsnbn4_X-iZedDnHBtT65kZGZKviorQwyIQ&s=10',
         bio: 'The comedic genius and versatile star acclaimed for breakout superhits like Agent Sai Srinivasa Athreya, Jathi Ratnalu, and Miss Shetty Mr Polishetty.',
         dateOfBirth: 'December 26, 1989',
         debutYear: 2012,
