@@ -74,8 +74,6 @@ function App() {
             >
               <Database size={15} /> 4+ Relational Collections
             </button>
-            <span>•</span>
-            <span>Placement Portfolio Project</span>
           </div>
         </div>
       </footer>

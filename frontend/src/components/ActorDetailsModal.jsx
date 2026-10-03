@@ -43,7 +43,7 @@ const ActorDetailsModal = ({ actorId, initialActor, onClose, onSelectMovie }) =>
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div
-        className="modal-content"
+        className="modal-content actor-modal-content"
         onClick={(e) => e.stopPropagation()}
         style={{ maxWidth: '900px' }}
       >
