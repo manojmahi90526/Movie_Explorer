@@ -52,7 +52,7 @@ const ActorDetailsModal = ({ actorId, initialActor, onClose, onSelectMovie }) =>
           style={{
             position: 'relative',
             background: 'linear-gradient(135deg, #131b2e 0%, #0b0f19 100%)',
-            padding: '30px',
+            padding: '20px',
             borderBottom: '1px solid var(--border-color)',
           }}
         >
@@ -82,7 +82,7 @@ const ActorDetailsModal = ({ actorId, initialActor, onClose, onSelectMovie }) =>
           <div
             style={{
               display: 'flex',
-              gap: '24px',
+              gap: '20px',
               alignItems: 'center',
               flexWrap: 'wrap',
             }}
@@ -91,8 +91,8 @@ const ActorDetailsModal = ({ actorId, initialActor, onClose, onSelectMovie }) =>
               src={actor.image}
               alt={actor.name}
               style={{
-                width: '130px',
-                height: '130px',
+                width: '110px',
+                height: '110px',
                 borderRadius: '50%',
                 objectFit: 'cover',
                 border: '3px solid #6366f1',
@@ -103,7 +103,7 @@ const ActorDetailsModal = ({ actorId, initialActor, onClose, onSelectMovie }) =>
               }}
             />
 
-            <div style={{ flex: 1, minWidth: '280px' }}>
+            <div style={{ flex: 1, minWidth: '200px' }}>
               <div style={{ display: 'flex', gap: '8px', marginBottom: '8px', flexWrap: 'wrap' }}>
                 <span
                   style={{
