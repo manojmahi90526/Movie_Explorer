@@ -32,6 +32,21 @@ connectDB().then(async () => {
   await seedInitialDataIfEmpty();
 });
 
+// Ensure DB connection before processing any API requests
+app.use('/api', async (req, res, next) => {
+  if (req.path === '/health') return next();
+  try {
+    await connectDB();
+    next();
+  } catch (error) {
+    console.error('Database connection error on API request:', error.message);
+    res.status(503).json({
+      success: false,
+      message: `Database connection error: ${error.message}. Please verify your MONGODB_URI in Render/Vercel settings.`,
+    });
+  }
+});
+
 // API Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/movies', movieRoutes);

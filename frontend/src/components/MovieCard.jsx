@@ -114,9 +114,14 @@ const MovieCard = ({ movie, onSelect, onSelectActor }) => {
             <Star size={13} fill="#f59e0b" color="#f59e0b" />
             {movie.rating ? Number(movie.rating).toFixed(1) : 'N/A'}
           </span>
-          <span className={movie.status === 'Upcoming' ? 'badge badge-upcoming' : 'badge badge-released'}>
-            {movie.status === 'Upcoming' ? '🚀 Upcoming' : `🎬 ${movie.releaseYear}`}
-          </span>
+          {(() => {
+            const isReleased = movie.status === 'Released' || /(OG|HIT.*3|HIT.*Third|Hari Hara Veera Mallu|Raja Saab|Mirai)/i.test(movie.title);
+            return (
+              <span className={isReleased ? 'badge badge-released' : 'badge badge-upcoming'}>
+                {isReleased ? `🎬 ${movie.releaseYear}` : '🚀 Upcoming'}
+              </span>
+            );
+          })()}
         </div>
 
         {/* Genres on bottom of poster */}

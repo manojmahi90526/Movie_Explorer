@@ -143,9 +143,14 @@ const HeroBanner = ({ movies, onSelectMovie }) => {
             <Star size={14} fill="#f59e0b" color="#f59e0b" />
             <strong>{currentMovie.rating}</strong> / 10
           </span>
-          <span className={`badge ${currentMovie.status === 'Released' ? 'badge-released' : 'badge-upcoming'}`} style={{ fontFamily: 'Space Grotesk' }}>
-            {currentMovie.releaseYear} • {currentMovie.status}
-          </span>
+          {(() => {
+            const isReleased = currentMovie.status === 'Released' || /(OG|HIT.*3|HIT.*Third|Hari Hara Veera Mallu|Raja Saab|Mirai)/i.test(currentMovie.title);
+            return (
+              <span className={`badge ${isReleased ? 'badge-released' : 'badge-upcoming'}`} style={{ fontFamily: 'Space Grotesk' }}>
+                {currentMovie.releaseYear} • {isReleased ? 'Released' : 'Upcoming'}
+              </span>
+            );
+          })()}
           {currentMovie.genre?.map((g) => (
             <span
               key={g}

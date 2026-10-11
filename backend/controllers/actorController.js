@@ -27,6 +27,7 @@ export const getActors = async (req, res) => {
         const upcomingCount = await Movie.countDocuments({
           'characters.actor': actor._id,
           status: 'Upcoming',
+          title: { $not: /(OG|HIT.*3|HIT.*Third|Hari Hara Veera Mallu|Raja Saab|Mirai)/i },
         });
         return {
           ...actor.toObject(),
@@ -64,8 +65,9 @@ export const getActorById = async (req, res) => {
       .sort({ releaseYear: -1 });
 
     // Segregate into previous (released) and upcoming movies
-    const previousMovies = allMovies.filter((m) => m.status === 'Released');
-    const upcomingMovies = allMovies.filter((m) => m.status === 'Upcoming');
+    const releasedRegex = /(OG|HIT.*3|HIT.*Third|Hari Hara Veera Mallu|Raja Saab|Mirai)/i;
+    const previousMovies = allMovies.filter((m) => m.status === 'Released' || releasedRegex.test(m.title));
+    const upcomingMovies = allMovies.filter((m) => m.status === 'Upcoming' && !releasedRegex.test(m.title));
 
     res.json({
       success: true,

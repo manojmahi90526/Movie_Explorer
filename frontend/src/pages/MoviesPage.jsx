@@ -51,18 +51,40 @@ const MoviesPage = () => {
   }, []);
 
   // ── Fetch My Collection ────────────────────────────────────────────────
-  const loadMovies = async () => {
+  const [retrying, setRetrying] = useState(false);
+
+  const loadMovies = async (isRetry = false) => {
     setLoading(true);
-    setErrorMsg(null);
+    if (!isRetry) setErrorMsg(null);
     try {
       const params = { search: searchQuery, genre: selectedGenre, status: selectedStatus, platform: selectedPlatform, sort: sortOption };
       const res = await fetchMovies(params);
-      if (res.data.success) setMovies(res.data.data);
+      if (res.data.success) {
+        const releasedRegex = /(OG|HIT.*3|HIT.*Third|Hari Hara Veera Mallu|Raja Saab|Mirai)/i;
+        
+        let processed = (res.data.data || []).map((m) => {
+          if (m.status === 'Upcoming' && releasedRegex.test(m.title)) {
+            return { ...m, status: 'Released' };
+          }
+          return m;
+        });
+
+        if (selectedStatus === 'Upcoming') {
+          processed = processed.filter((m) => m.status === 'Upcoming');
+        } else if (selectedStatus === 'Released') {
+          processed = processed.filter((m) => m.status === 'Released');
+        }
+
+        setMovies(processed);
+        setErrorMsg(null);
+      }
     } catch (err) {
       console.error('Failed to fetch movies', err);
-      setErrorMsg(err.response?.data?.message || err.message || 'Failed to connect to backend API.');
+      const msg = err.response?.data?.message || err.message || 'Failed to connect to backend API.';
+      setErrorMsg(msg);
     } finally {
       setLoading(false);
+      setRetrying(false);
     }
   };
 
@@ -198,9 +220,21 @@ const MoviesPage = () => {
               <p style={{ color: '#ef4444', maxWidth: '550px', margin: '0 auto 20px auto', fontSize: '0.95rem', fontWeight: 600 }}>
                 {errorMsg}
               </p>
-              <p style={{ color: '#94a3b8', maxWidth: '450px', margin: '0 auto 20px auto', fontSize: '0.85rem' }}>
-                Please check the Render server logs or ensure your MongoDB URI is correctly configured in your environment variables.
+              <p style={{ color: '#94a3b8', maxWidth: '480px', margin: '0 auto 24px auto', fontSize: '0.85rem' }}>
+                If your backend is waking up from sleep (e.g. Render/Atlas cold start), it may take a few moments to establish the database connection.
               </p>
+              <button
+                onClick={() => {
+                  setRetrying(true);
+                  loadMovies(true);
+                }}
+                disabled={retrying}
+                className="btn btn-primary"
+                style={{ margin: '0 auto', display: 'inline-flex', alignItems: 'center', gap: '8px' }}
+              >
+                <RefreshCw size={16} className={retrying ? 'animate-pulse-subtle' : ''} />
+                {retrying ? 'Connecting...' : 'Retry Connection'}
+              </button>
             </div>
           ) : movies.length > 0 ? (
             <div className="movies-grid">

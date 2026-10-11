@@ -22,9 +22,25 @@ export const getMovies = async (req, res) => {
     const { search, genre, status, platform, sort } = req.query;
     let query = {};
 
+    // Auto-update any previously upcoming movies that are already released
+    try {
+      await Movie.updateMany(
+        {
+          status: 'Upcoming',
+          title: { $in: [/OG/i, /HIT.*3/i, /HIT.*Third/i, /Hari Hara Veera Mallu/i, /Raja Saab/i, /Mirai/i] }
+        },
+        { $set: { status: 'Released' } }
+      );
+    } catch (e) {}
+
     // Filter by status (Released / Upcoming)
     if (status && status !== 'All') {
-      query.status = status;
+      if (status === 'Upcoming') {
+        query.status = 'Upcoming';
+        query.title = { $not: /(OG|HIT.*3|HIT.*Third|Hari Hara Veera Mallu|Raja Saab|Mirai)/i };
+      } else {
+        query.status = status;
+      }
     }
 
     // Filter by genre
@@ -65,7 +81,8 @@ export const getMovies = async (req, res) => {
       .populate('characters.actor', 'name image roleType nationality debutYear')
       .populate('streamingPlatforms.platform', 'name logo websiteUrl badgeColor')
       .populate('reviews')
-      .sort(sortOptions);
+      .sort(sortOptions)
+      .lean();
 
     res.json({
       success: true,
@@ -84,7 +101,8 @@ export const getMovieById = async (req, res) => {
     const movie = await Movie.findById(req.params.id)
       .populate('characters.actor')
       .populate('streamingPlatforms.platform')
-      .populate('reviews');
+      .populate('reviews')
+      .lean();
 
     if (!movie) {
       return res.status(404).json({ success: false, message: 'Movie not found' });

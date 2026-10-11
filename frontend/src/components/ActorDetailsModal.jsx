@@ -36,7 +36,16 @@ const ActorDetailsModal = ({ actorId, initialActor, onClose, onSelectMovie }) =>
   }, [actorId, initialActor]);
 
   const actor = data?.actor || initialActor;
-  const filmography = data?.filmography || { previousMovies: [], upcomingMovies: [] };
+  const rawFilmography = data?.filmography || { previousMovies: [], upcomingMovies: [] };
+  const releasedRegex = /(OG|HIT.*3|HIT.*Third|Hari Hara Veera Mallu|Raja Saab|Mirai)/i;
+  const filmography = {
+    totalCount: rawFilmography.totalCount || 0,
+    previousMovies: [
+      ...(rawFilmography.previousMovies || []),
+      ...(rawFilmography.upcomingMovies || []).filter((m) => releasedRegex.test(m.title)),
+    ],
+    upcomingMovies: (rawFilmography.upcomingMovies || []).filter((m) => !releasedRegex.test(m.title)),
+  };
 
   if (!actor) return null;
 

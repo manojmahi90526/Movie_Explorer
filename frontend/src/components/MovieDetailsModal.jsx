@@ -165,9 +165,14 @@ const MovieDetailsModal = ({
                   <Star size={13} fill="#f59e0b" />
                   {movie.rating} / 10
                 </span>
-                <span className={movie.status === 'Upcoming' ? 'badge badge-upcoming' : 'badge badge-released'}>
-                  {movie.status} ({movie.releaseYear})
-                </span>
+                {(() => {
+                  const isReleased = movie.status === 'Released' || /(OG|HIT.*3|HIT.*Third|Hari Hara Veera Mallu|Raja Saab|Mirai)/i.test(movie.title);
+                  return (
+                    <span className={isReleased ? 'badge badge-released' : 'badge badge-upcoming'}>
+                      {isReleased ? 'Released' : 'Upcoming'} ({movie.releaseYear})
+                    </span>
+                  );
+                })()}
                 <span className="badge badge-platform">
                   <Clock size={13} /> {movie.duration || '2h 15m'}
                 </span>
