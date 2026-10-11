@@ -37,6 +37,9 @@ app.use('/api', async (req, res, next) => {
   if (req.path === '/health') return next();
   try {
     await connectDB();
+    if (mongoose.connection.readyState !== 1) {
+      throw new Error('Database is connecting, please retry in a moment');
+    }
     next();
   } catch (error) {
     console.error('Database connection error on API request:', error.message);

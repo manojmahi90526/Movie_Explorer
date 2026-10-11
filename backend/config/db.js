@@ -7,56 +7,65 @@ if (!cached) {
   cached = global.mongoose = { conn: null, promise: null };
 }
 
+mongoose.set('bufferTimeoutMS', 30000);
+
 export const connectDB = async () => {
   // If already connected, return existing connection immediately
   if (mongoose.connection.readyState === 1) {
     return mongoose.connection;
   }
 
-  if (cached.conn) {
-    return cached.conn;
+  // If currently connecting, wait for the connection promise
+  if (cached.promise) {
+    try {
+      await cached.promise;
+      if (mongoose.connection.readyState === 1) {
+        return mongoose.connection;
+      }
+    } catch (e) {
+      cached.promise = null;
+    }
   }
 
-  if (!cached.promise) {
-    const customUri = process.env.MONGODB_URI;
+  const customUri = process.env.MONGODB_URI;
 
-    if (customUri) {
-      console.log(`Connecting to MongoDB at: ${customUri.replace(/\/\/[^:]+:[^@]+@/, '//***:***@')}...`);
-      
-      const options = {
-        serverSelectionTimeoutMS: 15000, // 15 seconds to give cloud database (Atlas) time during cold starts
-        socketTimeoutMS: 45000,
-      };
+  if (customUri) {
+    console.log(`Connecting to MongoDB at: ${customUri.replace(/\/\/[^:]+:[^@]+@/, '//***:***@')}...`);
+    
+    const options = {
+      serverSelectionTimeoutMS: 30000, // 30 seconds for cloud database (Atlas) cold starts
+      socketTimeoutMS: 45000,
+      maxPoolSize: 10,
+    };
 
-      cached.promise = mongoose.connect(customUri, options).then((mongooseInstance) => {
-        console.log('Connected to MongoDB Database successfully.');
-        cached.conn = mongooseInstance;
-        return mongooseInstance;
-      }).catch(async (err) => {
-        console.warn('Custom MongoDB URI connection failed or timed out:', err.message);
-        cached.promise = null; // Reset so subsequent requests can attempt connection
+    cached.promise = mongoose.connect(customUri, options).then((mongooseInstance) => {
+      console.log('Connected to MongoDB Database successfully.');
+      cached.conn = mongooseInstance;
+      return mongooseInstance;
+    }).catch(async (err) => {
+      console.warn('Custom MongoDB URI connection failed or timed out:', err.message);
+      cached.promise = null; // Reset so subsequent requests can attempt connection
 
-        if (process.env.NODE_ENV === 'production' || process.env.RENDER || process.env.VERCEL) {
-          console.error('Cannot fallback to MongoMemoryServer in production. Exiting.');
-          throw err;
-        }
-
-        console.log('Falling back to embedded in-memory MongoDB for local testing...');
-        mongod = await MongoMemoryServer.create();
-        const uri = mongod.getUri();
-        return mongoose.connect(uri);
-      });
-    } else {
       if (process.env.NODE_ENV === 'production' || process.env.RENDER || process.env.VERCEL) {
-        console.error('MONGODB_URI is not set in environment variables.');
-        throw new Error('MONGODB_URI is not set in production environment variables');
+        console.error('Cannot fallback to MongoMemoryServer in production. Exiting.');
+        throw err;
       }
-      console.log('Initializing embedded In-Memory MongoDB engine...');
+
+      console.log('Falling back to embedded in-memory MongoDB for local testing...');
       mongod = await MongoMemoryServer.create();
       const uri = mongod.getUri();
-      cached.promise = mongoose.connect(uri);
-      console.log(`Connected to Embedded In-Memory MongoDB (${uri})`);
+      return mongoose.connect(uri);
+    });
+  } else {
+    if (process.env.NODE_ENV === 'production' || process.env.RENDER || process.env.VERCEL) {
+      console.error('MONGODB_URI is not set in environment variables.');
+      throw new Error('MONGODB_URI is not set in production environment variables');
     }
+    console.log('Initializing embedded In-Memory MongoDB engine...');
+    mongod = await MongoMemoryServer.create();
+    const uri = mongod.getUri();
+    cached.promise = mongoose.connect(uri);
+    console.log(`Connected to Embedded In-Memory MongoDB (${uri})`);
   }
 
   try {

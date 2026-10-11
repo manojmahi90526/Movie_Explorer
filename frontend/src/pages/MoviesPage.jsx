@@ -85,6 +85,9 @@ const MoviesPage = () => {
       console.error('Failed to fetch movies', err);
       const msg = err.response?.data?.message || err.message || 'Failed to connect to backend API.';
       setErrorMsg(msg);
+      if (!isRetry && (msg.includes('buffering') || msg.includes('timed out') || msg.includes('connecting'))) {
+        setTimeout(() => loadMovies(true), 2500);
+      }
     } finally {
       setLoading(false);
       setRetrying(false);
