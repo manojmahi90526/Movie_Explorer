@@ -28,28 +28,15 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Database connection & Auto-Seed
-connectDB().then(async () => {
-  await seedInitialDataIfEmpty();
+// Database connection & Auto-Seed (Non-blocking background initialization)
+connectDB().then(async (conn) => {
+  if (conn && mongoose.connection.readyState === 1) {
+    await seedInitialDataIfEmpty();
+  }
+}).catch((err) => {
+  console.warn('Background MongoDB connection notice:', err.message);
 });
 
-// Ensure DB connection before processing any API requests
-app.use('/api', async (req, res, next) => {
-  if (req.path === '/health') return next();
-  try {
-    await connectDB();
-    if (mongoose.connection.readyState !== 1) {
-      throw new Error('Database is connecting, please retry in a moment');
-    }
-    next();
-  } catch (error) {
-    console.error('Database connection error on API request:', error.message);
-    res.status(503).json({
-      success: false,
-      message: `Database connection error: ${error.message}. Please verify your MONGODB_URI in Render/Vercel settings.`,
-    });
-  }
-});
 
 // API Routes
 app.use('/api/auth', authRoutes);

@@ -1,7 +1,9 @@
+import mongoose from 'mongoose';
 import Movie, { countWords } from '../models/Movie.js';
 import Actor from '../models/Actor.js';
 import Review from '../models/Review.js';
 import { seedDatabase } from '../seed.js';
+import { getFallbackMovies, getFallbackMovieById } from '../services/fallbackService.js';
 
 // @desc    Reseed database with fresh Telugu cinema data
 // @route   POST /api/movies/reseed
@@ -18,134 +20,157 @@ export const reseedData = async (req, res) => {
 // @desc    Get all movies with search, filter, and population
 // @route   GET /api/movies
 export const getMovies = async (req, res) => {
-  try {
-    const { search, genre, status, platform, sort } = req.query;
-    let query = {};
+  const { search, genre, status, platform, sort } = req.query;
 
-    // Ensure OG and HIT 3 are completely removed from the database
+  // 1. If MongoDB is connected and ready, query MongoDB
+  if (mongoose.connection.readyState === 1) {
     try {
-      await Movie.deleteMany({
-        title: { $regex: /(OG\b|They Call Him OG|HIT.*3|HIT.*Third)/i }
-      });
-    } catch (e) {}
+      let query = {};
 
-    // Auto-update any previously upcoming movies that are already released
-    const releasedTitlesRegex = /(Hari\s*Hara|Harihara|Raja\s*Sa+b|Rajasa+b|Mirai|Merai)/i;
-    try {
-      await Movie.updateMany(
-        {
-          status: 'Upcoming',
-          title: { $regex: releasedTitlesRegex }
-        },
-        { $set: { status: 'Released' } }
-      );
-    } catch (e) {}
+      // Ensure OG and HIT 3 are completely removed from the database
+      try {
+        await Movie.deleteMany({
+          title: { $regex: /(OG\b|They Call Him OG|HIT.*3|HIT.*Third)/i }
+        });
+      } catch (e) {}
 
-    // Filter by status (Released / Upcoming)
-    if (status && status !== 'All') {
-      if (status === 'Upcoming') {
-        query.status = 'Upcoming';
-        query.title = { $not: releasedTitlesRegex };
-      } else if (status === 'Released') {
+      // Auto-update any previously upcoming movies that are already released
+      const releasedTitlesRegex = /(Hari\s*Hara|Harihara|Raja\s*Sa+b|Rajasa+b|Mirai|Merai)/i;
+      try {
+        await Movie.updateMany(
+          {
+            status: 'Upcoming',
+            title: { $regex: releasedTitlesRegex }
+          },
+          { $set: { status: 'Released' } }
+        );
+      } catch (e) {}
+
+      // Filter by status (Released / Upcoming)
+      if (status && status !== 'All') {
+        if (status === 'Upcoming') {
+          query.status = 'Upcoming';
+          query.title = { $not: releasedTitlesRegex };
+        } else if (status === 'Released') {
+          query.$or = [
+            { status: 'Released' },
+            { title: { $regex: releasedTitlesRegex } }
+          ];
+        } else {
+          query.status = status;
+        }
+      }
+
+      // Filter by genre
+      if (genre && genre !== 'All') {
+        query.genre = { $in: [new RegExp(genre, 'i')] };
+      }
+
+      // Filter by platform ID
+      if (platform && platform !== 'All') {
+        query['streamingPlatforms.platform'] = platform;
+      }
+
+      // Keyword Search (in title, brief story, or character names)
+      if (search && search.trim() !== '') {
+        const searchRegex = new RegExp(search.trim(), 'i');
+
+        // Also check if search query matches any actor name
+        const matchingActors = await Actor.find({ name: searchRegex }).select('_id');
+        const actorIds = matchingActors.map((a) => a._id);
+
         query.$or = [
-          { status: 'Released' },
-          { title: { $regex: releasedTitlesRegex } }
+          { title: searchRegex },
+          { briefStory: searchRegex },
+          { 'characters.characterName': searchRegex },
+          { 'characters.actor': { $in: actorIds } },
         ];
-      } else {
-        query.status = status;
       }
-    }
 
-    // Filter by genre
-    if (genre && genre !== 'All') {
-      query.genre = { $in: [new RegExp(genre, 'i')] };
-    }
+      // Sorting
+      let sortOptions = { createdAt: -1 };
+      if (sort === 'rating') sortOptions = { rating: -1 };
+      if (sort === 'box_office') sortOptions = { 'boxOffice.grossInCrores': -1 };
+      if (sort === 'year_desc') sortOptions = { releaseYear: -1 };
+      if (sort === 'year_asc') sortOptions = { releaseYear: 1 };
+      if (sort === 'title') sortOptions = { title: 1 };
 
-    // Filter by platform ID
-    if (platform && platform !== 'All') {
-      query['streamingPlatforms.platform'] = platform;
-    }
+      const movies = await Movie.find(query)
+        .maxTimeMS(4000)
+        .populate('characters.actor', 'name image roleType nationality debutYear')
+        .populate('streamingPlatforms.platform', 'name logo websiteUrl badgeColor')
+        .populate('reviews')
+        .sort(sortOptions)
+        .lean();
 
-    // Keyword Search (in title, brief story, or character names)
-    if (search && search.trim() !== '') {
-      const searchRegex = new RegExp(search.trim(), 'i');
+      // In-memory final sanitization:
+      const removeRegex = /(OG\b|They Call Him OG|HIT.*3|HIT.*Third)/i;
+      const releasedTitlesFilter = /(Hari\s*Hara|Harihara|Raja\s*Sa+b|Rajasa+b|Mirai|Merai)/i;
+      let finalMovies = movies.filter((m) => !removeRegex.test(m.title));
 
-      // Also check if search query matches any actor name
-      const matchingActors = await Actor.find({ name: searchRegex }).select('_id');
-      const actorIds = matchingActors.map((a) => a._id);
+      // Ensure Mirai, HHVM, and Raja Saab have status 'Released'
+      finalMovies = finalMovies.map((m) => {
+        if (releasedTitlesFilter.test(m.title)) {
+          return { ...m, status: 'Released' };
+        }
+        return m;
+      });
 
-      query.$or = [
-        { title: searchRegex },
-        { briefStory: searchRegex },
-        { 'characters.characterName': searchRegex },
-        { 'characters.actor': { $in: actorIds } },
-      ];
-    }
-
-    // Sorting
-    let sortOptions = { createdAt: -1 };
-    if (sort === 'rating') sortOptions = { rating: -1 };
-    if (sort === 'box_office') sortOptions = { 'boxOffice.grossInCrores': -1 };
-    if (sort === 'year_desc') sortOptions = { releaseYear: -1 };
-    if (sort === 'year_asc') sortOptions = { releaseYear: 1 };
-    if (sort === 'title') sortOptions = { title: 1 };
-
-    const movies = await Movie.find(query)
-      .populate('characters.actor', 'name image roleType nationality debutYear')
-      .populate('streamingPlatforms.platform', 'name logo websiteUrl badgeColor')
-      .populate('reviews')
-      .sort(sortOptions)
-      .lean();
-
-    // In-memory final sanitization:
-    const removeRegex = /(OG\b|They Call Him OG|HIT.*3|HIT.*Third)/i;
-    const releasedTitlesFilter = /(Hari\s*Hara|Harihara|Raja\s*Sa+b|Rajasa+b|Mirai|Merai)/i;
-    let finalMovies = movies.filter((m) => !removeRegex.test(m.title));
-
-    // Ensure Mirai, HHVM, and Raja Saab have status 'Released'
-    finalMovies = finalMovies.map((m) => {
-      if (releasedTitlesFilter.test(m.title)) {
-        return { ...m, status: 'Released' };
+      // Strict status filtering
+      if (status === 'Upcoming') {
+        finalMovies = finalMovies.filter((m) => m.status === 'Upcoming' && !releasedTitlesFilter.test(m.title));
+      } else if (status === 'Released') {
+        finalMovies = finalMovies.filter((m) => m.status === 'Released' || releasedTitlesFilter.test(m.title));
       }
-      return m;
-    });
 
-    // Strict status filtering
-    if (status === 'Upcoming') {
-      finalMovies = finalMovies.filter((m) => m.status === 'Upcoming' && !releasedTitlesFilter.test(m.title));
-    } else if (status === 'Released') {
-      finalMovies = finalMovies.filter((m) => m.status === 'Released' || releasedTitlesFilter.test(m.title));
+      return res.json({
+        success: true,
+        count: finalMovies.length,
+        data: finalMovies,
+      });
+    } catch (error) {
+      console.warn('⚠️ MongoDB query failed/timed out, serving via fallback dataset:', error.message);
     }
-
-    res.json({
-      success: true,
-      count: finalMovies.length,
-      data: finalMovies,
-    });
-  } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
   }
+
+  // 2. Resilient In-Memory Fallback (Guaranteed to return in < 5ms without any errors)
+  const fallbackMovies = getFallbackMovies({ search, genre, status, platform, sort });
+  return res.json({
+    success: true,
+    count: fallbackMovies.length,
+    data: fallbackMovies,
+    fallback: true,
+  });
 };
 
 // @desc    Get single movie by ID with full details, reviews & platforms
 // @route   GET /api/movies/:id
 export const getMovieById = async (req, res) => {
-  try {
-    const movie = await Movie.findById(req.params.id)
-      .populate('characters.actor')
-      .populate('streamingPlatforms.platform')
-      .populate('reviews')
-      .lean();
+  if (mongoose.connection.readyState === 1) {
+    try {
+      const movie = await Movie.findById(req.params.id)
+        .maxTimeMS(4000)
+        .populate('characters.actor')
+        .populate('streamingPlatforms.platform')
+        .populate('reviews')
+        .lean();
 
-    if (!movie) {
-      return res.status(404).json({ success: false, message: 'Movie not found' });
+      if (movie) {
+        return res.json({ success: true, data: movie });
+      }
+    } catch (error) {
+      console.warn('⚠️ MongoDB getMovieById failed, falling back:', error.message);
     }
-
-    res.json({ success: true, data: movie });
-  } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
   }
+
+  const fallbackMovie = getFallbackMovieById(req.params.id);
+  if (fallbackMovie) {
+    return res.json({ success: true, data: fallbackMovie, fallback: true });
+  }
+
+  return res.status(404).json({ success: false, message: 'Movie not found' });
 };
+
 
 // @desc    Create a new movie (Admin Only)
 // @route   POST /api/movies

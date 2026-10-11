@@ -80,13 +80,35 @@ const MoviesPage = () => {
 
         setMovies(processed);
         setErrorMsg(null);
+
+        // Cache movies for seamless offline / cold-start fallback
+        if (processed.length > 0 && !searchQuery && selectedGenre === 'All' && selectedStatus === 'All' && selectedPlatform === 'All') {
+          try {
+            localStorage.setItem('cinesphere_cached_movies', JSON.stringify(processed));
+          } catch (e) {}
+        }
       }
     } catch (err) {
       console.error('Failed to fetch movies', err);
+      // Check if we have cached movies in localStorage
+      try {
+        const cached = localStorage.getItem('cinesphere_cached_movies');
+        if (cached) {
+          const parsed = JSON.parse(cached);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            setMovies(parsed);
+            setErrorMsg(null);
+            setLoading(false);
+            setRetrying(false);
+            return;
+          }
+        }
+      } catch (e) {}
+
       const msg = err.response?.data?.message || err.message || 'Failed to connect to backend API.';
       setErrorMsg(msg);
       if (!isRetry && (msg.includes('buffering') || msg.includes('timed out') || msg.includes('connecting'))) {
-        setTimeout(() => loadMovies(true), 2500);
+        setTimeout(() => loadMovies(true), 2000);
       }
     } finally {
       setLoading(false);

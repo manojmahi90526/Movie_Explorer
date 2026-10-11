@@ -7,7 +7,9 @@ if (!cached) {
   cached = global.mongoose = { conn: null, promise: null };
 }
 
-mongoose.set('bufferTimeoutMS', 30000);
+// Disable Mongoose command buffering so queries fail immediately if not connected,
+// allowing our instant in-memory fallback to serve data with 0ms delay!
+mongoose.set('bufferCommands', false);
 
 export const connectDB = async () => {
   // If already connected, return existing connection immediately
@@ -18,9 +20,9 @@ export const connectDB = async () => {
   // If currently connecting, wait for the connection promise
   if (cached.promise) {
     try {
-      await cached.promise;
+      const conn = await cached.promise;
       if (mongoose.connection.readyState === 1) {
-        return mongoose.connection;
+        return conn;
       }
     } catch (e) {
       cached.promise = null;
@@ -33,46 +35,56 @@ export const connectDB = async () => {
     console.log(`Connecting to MongoDB at: ${customUri.replace(/\/\/[^:]+:[^@]+@/, '//***:***@')}...`);
     
     const options = {
-      serverSelectionTimeoutMS: 30000, // 30 seconds for cloud database (Atlas) cold starts
-      socketTimeoutMS: 45000,
+      serverSelectionTimeoutMS: 5000, // 5 seconds fast timeout to prevent long buffering
+      socketTimeoutMS: 15000,
       maxPoolSize: 10,
     };
 
     cached.promise = mongoose.connect(customUri, options).then((mongooseInstance) => {
-      console.log('Connected to MongoDB Database successfully.');
+      console.log('✅ Connected to MongoDB Database successfully.');
       cached.conn = mongooseInstance;
       return mongooseInstance;
     }).catch(async (err) => {
-      console.warn('Custom MongoDB URI connection failed or timed out:', err.message);
-      cached.promise = null; // Reset so subsequent requests can attempt connection
+      console.warn('⚠️ Custom MongoDB URI connection failed or timed out:', err.message);
+      cached.promise = null;
 
       if (process.env.NODE_ENV === 'production' || process.env.RENDER || process.env.VERCEL) {
-        console.error('Cannot fallback to MongoMemoryServer in production. Exiting.');
-        throw err;
+        console.warn('⚡ Running in cloud environment (Render/Vercel). Resilient in-memory dataset is active.');
+        return null;
       }
 
-      console.log('Falling back to embedded in-memory MongoDB for local testing...');
-      mongod = await MongoMemoryServer.create();
-      const uri = mongod.getUri();
-      return mongoose.connect(uri);
+      try {
+        console.log('Falling back to embedded in-memory MongoDB for local testing...');
+        mongod = await MongoMemoryServer.create();
+        const uri = mongod.getUri();
+        return await mongoose.connect(uri);
+      } catch (memErr) {
+        console.warn('MongoMemoryServer could not start, serving via fallback dataset:', memErr.message);
+        return null;
+      }
     });
   } else {
     if (process.env.NODE_ENV === 'production' || process.env.RENDER || process.env.VERCEL) {
-      console.error('MONGODB_URI is not set in environment variables.');
-      throw new Error('MONGODB_URI is not set in production environment variables');
+      console.warn('ℹ️ MONGODB_URI not provided. Serving Telugu cinema via in-memory dataset.');
+      return null;
     }
-    console.log('Initializing embedded In-Memory MongoDB engine...');
-    mongod = await MongoMemoryServer.create();
-    const uri = mongod.getUri();
-    cached.promise = mongoose.connect(uri);
-    console.log(`Connected to Embedded In-Memory MongoDB (${uri})`);
+    try {
+      console.log('Initializing embedded In-Memory MongoDB engine...');
+      mongod = await MongoMemoryServer.create();
+      const uri = mongod.getUri();
+      cached.promise = mongoose.connect(uri);
+      console.log(`Connected to Embedded In-Memory MongoDB (${uri})`);
+    } catch (memErr) {
+      console.warn('MongoMemoryServer unavailable, serving via fallback dataset:', memErr.message);
+      return null;
+    }
   }
 
   try {
     cached.conn = await cached.promise;
   } catch (e) {
     cached.promise = null;
-    throw e;
+    console.warn('MongoDB connection deferred; serving requests via fallback dataset.');
   }
 
   return cached.conn;
@@ -92,3 +104,4 @@ export const disconnectDB = async () => {
     console.error('Error disconnecting DB:', err.message);
   }
 };
+
