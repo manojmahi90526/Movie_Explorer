@@ -1,35 +1,25 @@
-import mongoose from 'mongoose';
 import Review from '../models/Review.js';
 import Movie from '../models/Movie.js';
-import { getFallbackReviews } from '../services/fallbackService.js';
 
 // @desc    Get reviews for a movie or all reviews
 // @route   GET /api/reviews
 export const getReviews = async (req, res) => {
-  const { movieId, platformSource } = req.query;
+  try {
+    const { movieId, platformSource } = req.query;
+    let query = {};
 
-  if (mongoose.connection.readyState === 1) {
-    try {
-      let query = {};
+    if (movieId) query.movie = movieId;
+    if (platformSource) query.platformSource = new RegExp(platformSource, 'i');
 
-      if (movieId) query.movie = movieId;
-      if (platformSource) query.platformSource = new RegExp(platformSource, 'i');
+    const reviews = await Review.find(query)
+      .populate('movie', 'title posterUrl releaseYear')
+      .sort({ createdAt: -1 });
 
-      const reviews = await Review.find(query)
-        .maxTimeMS(4000)
-        .populate('movie', 'title posterUrl releaseYear')
-        .sort({ createdAt: -1 });
-
-      return res.json({ success: true, count: reviews.length, data: reviews });
-    } catch (error) {
-      console.warn('⚠️ MongoDB getReviews failed, falling back:', error.message);
-    }
+    res.json({ success: true, count: reviews.length, data: reviews });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
   }
-
-  const fallbackReviews = getFallbackReviews(movieId);
-  return res.json({ success: true, count: fallbackReviews.length, data: fallbackReviews, fallback: true });
 };
-
 
 // @desc    Create a new review for a movie
 // @route   POST /api/reviews

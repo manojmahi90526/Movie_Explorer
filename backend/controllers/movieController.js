@@ -1,9 +1,7 @@
-import mongoose from 'mongoose';
 import Movie, { countWords } from '../models/Movie.js';
 import Actor from '../models/Actor.js';
 import Review from '../models/Review.js';
 import { seedDatabase } from '../seed.js';
-import { getFallbackMovies, getFallbackMovieById } from '../services/fallbackService.js';
 
 // @desc    Reseed database with fresh Telugu cinema data
 // @route   POST /api/movies/reseed
@@ -16,161 +14,111 @@ export const reseedData = async (req, res) => {
   }
 };
 
-
 // @desc    Get all movies with search, filter, and population
 // @route   GET /api/movies
 export const getMovies = async (req, res) => {
-  const { search, genre, status, platform, sort } = req.query;
+  try {
+    const { search, genre, status, platform, sort } = req.query;
+    let query = {};
 
-  // 1. If MongoDB is connected and ready, query MongoDB
-  if (mongoose.connection.readyState === 1) {
-    try {
-      let query = {};
+    // Filter by status (Released / Upcoming)
+    // Remove already released movies (Mirai, Hari Hara Veera Mallu, Raja Saab, OG, HIT 3) from upcoming
+    const releasedTitlesRegex = /(Hari\s*Hara|Harihara|Raja\s*Sa+b|Rajasa+b|Mirai|Merai|OG\b|They Call Him OG|HIT.*3|HIT.*Third)/i;
 
-      // Ensure OG and HIT 3 are completely removed from the database
-      try {
-        await Movie.deleteMany({
-          title: { $regex: /(OG\b|They Call Him OG|HIT.*3|HIT.*Third)/i }
-        });
-      } catch (e) {}
-
-      // Auto-update any previously upcoming movies that are already released
-      const releasedTitlesRegex = /(Hari\s*Hara|Harihara|Raja\s*Sa+b|Rajasa+b|Mirai|Merai)/i;
-      try {
-        await Movie.updateMany(
-          {
-            status: 'Upcoming',
-            title: { $regex: releasedTitlesRegex }
-          },
-          { $set: { status: 'Released' } }
-        );
-      } catch (e) {}
-
-      // Filter by status (Released / Upcoming)
-      if (status && status !== 'All') {
-        if (status === 'Upcoming') {
-          query.status = 'Upcoming';
-          query.title = { $not: releasedTitlesRegex };
-        } else if (status === 'Released') {
-          query.$or = [
-            { status: 'Released' },
-            { title: { $regex: releasedTitlesRegex } }
-          ];
-        } else {
-          query.status = status;
-        }
-      }
-
-      // Filter by genre
-      if (genre && genre !== 'All') {
-        query.genre = { $in: [new RegExp(genre, 'i')] };
-      }
-
-      // Filter by platform ID
-      if (platform && platform !== 'All') {
-        query['streamingPlatforms.platform'] = platform;
-      }
-
-      // Keyword Search (in title, brief story, or character names)
-      if (search && search.trim() !== '') {
-        const searchRegex = new RegExp(search.trim(), 'i');
-
-        // Also check if search query matches any actor name
-        const matchingActors = await Actor.find({ name: searchRegex }).select('_id');
-        const actorIds = matchingActors.map((a) => a._id);
-
-        query.$or = [
-          { title: searchRegex },
-          { briefStory: searchRegex },
-          { 'characters.characterName': searchRegex },
-          { 'characters.actor': { $in: actorIds } },
-        ];
-      }
-
-      // Sorting
-      let sortOptions = { createdAt: -1 };
-      if (sort === 'rating') sortOptions = { rating: -1 };
-      if (sort === 'box_office') sortOptions = { 'boxOffice.grossInCrores': -1 };
-      if (sort === 'year_desc') sortOptions = { releaseYear: -1 };
-      if (sort === 'year_asc') sortOptions = { releaseYear: 1 };
-      if (sort === 'title') sortOptions = { title: 1 };
-
-      const movies = await Movie.find(query)
-        .maxTimeMS(4000)
-        .populate('characters.actor', 'name image roleType nationality debutYear')
-        .populate('streamingPlatforms.platform', 'name logo websiteUrl badgeColor')
-        .populate('reviews')
-        .sort(sortOptions)
-        .lean();
-
-      // In-memory final sanitization:
-      const removeRegex = /(OG\b|They Call Him OG|HIT.*3|HIT.*Third)/i;
-      const releasedTitlesFilter = /(Hari\s*Hara|Harihara|Raja\s*Sa+b|Rajasa+b|Mirai|Merai)/i;
-      let finalMovies = movies.filter((m) => !removeRegex.test(m.title));
-
-      // Ensure Mirai, HHVM, and Raja Saab have status 'Released'
-      finalMovies = finalMovies.map((m) => {
-        if (releasedTitlesFilter.test(m.title)) {
-          return { ...m, status: 'Released' };
-        }
-        return m;
-      });
-
-      // Strict status filtering
+    if (status && status !== 'All') {
       if (status === 'Upcoming') {
-        finalMovies = finalMovies.filter((m) => m.status === 'Upcoming' && !releasedTitlesFilter.test(m.title));
+        query.status = 'Upcoming';
+        query.title = { $not: releasedTitlesRegex };
       } else if (status === 'Released') {
-        finalMovies = finalMovies.filter((m) => m.status === 'Released' || releasedTitlesFilter.test(m.title));
+        query.status = 'Released';
+      } else {
+        query.status = status;
       }
-
-      return res.json({
-        success: true,
-        count: finalMovies.length,
-        data: finalMovies,
-      });
-    } catch (error) {
-      console.warn('⚠️ MongoDB query failed/timed out, serving via fallback dataset:', error.message);
     }
-  }
 
-  // 2. Resilient In-Memory Fallback (Guaranteed to return in < 5ms without any errors)
-  const fallbackMovies = getFallbackMovies({ search, genre, status, platform, sort });
-  return res.json({
-    success: true,
-    count: fallbackMovies.length,
-    data: fallbackMovies,
-    fallback: true,
-  });
+    // Always exclude OG and HIT 3
+    const removeRegex = /(OG\b|They Call Him OG|HIT.*3|HIT.*Third)/i;
+    if (query.title) {
+      query.$and = [{ title: query.title }, { title: { $not: removeRegex } }];
+      delete query.title;
+    } else {
+      query.title = { $not: removeRegex };
+    }
+
+    // Filter by genre
+    if (genre && genre !== 'All') {
+      query.genre = { $in: [new RegExp(genre, 'i')] };
+    }
+
+    // Filter by platform ID
+    if (platform && platform !== 'All') {
+      query['streamingPlatforms.platform'] = platform;
+    }
+
+    // Keyword Search (in title, brief story, or character names)
+    if (search && search.trim() !== '') {
+      const searchRegex = new RegExp(search.trim(), 'i');
+
+      // Also check if search query matches any actor name
+      const matchingActors = await Actor.find({ name: searchRegex }).select('_id');
+      const actorIds = matchingActors.map((a) => a._id);
+
+      const searchConditions = [
+        { title: searchRegex },
+        { briefStory: searchRegex },
+        { 'characters.characterName': searchRegex },
+        { 'characters.actor': { $in: actorIds } },
+      ];
+
+      if (query.$and) {
+        query.$and.push({ $or: searchConditions });
+      } else {
+        query.$or = searchConditions;
+      }
+    }
+
+    // Sorting
+    let sortOptions = { createdAt: -1 };
+    if (sort === 'rating') sortOptions = { rating: -1 };
+    if (sort === 'box_office') sortOptions = { 'boxOffice.grossInCrores': -1 };
+    if (sort === 'year_desc') sortOptions = { releaseYear: -1 };
+    if (sort === 'year_asc') sortOptions = { releaseYear: 1 };
+    if (sort === 'title') sortOptions = { title: 1 };
+
+    const movies = await Movie.find(query)
+      .populate('characters.actor', 'name image roleType nationality debutYear')
+      .populate('streamingPlatforms.platform', 'name logo websiteUrl badgeColor')
+      .populate('reviews')
+      .sort(sortOptions);
+
+    res.json({
+      success: true,
+      count: movies.length,
+      data: movies,
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
 };
 
 // @desc    Get single movie by ID with full details, reviews & platforms
 // @route   GET /api/movies/:id
 export const getMovieById = async (req, res) => {
-  if (mongoose.connection.readyState === 1) {
-    try {
-      const movie = await Movie.findById(req.params.id)
-        .maxTimeMS(4000)
-        .populate('characters.actor')
-        .populate('streamingPlatforms.platform')
-        .populate('reviews')
-        .lean();
+  try {
+    const movie = await Movie.findById(req.params.id)
+      .populate('characters.actor')
+      .populate('streamingPlatforms.platform')
+      .populate('reviews');
 
-      if (movie) {
-        return res.json({ success: true, data: movie });
-      }
-    } catch (error) {
-      console.warn('⚠️ MongoDB getMovieById failed, falling back:', error.message);
+    if (!movie) {
+      return res.status(404).json({ success: false, message: 'Movie not found' });
     }
-  }
 
-  const fallbackMovie = getFallbackMovieById(req.params.id);
-  if (fallbackMovie) {
-    return res.json({ success: true, data: fallbackMovie, fallback: true });
+    res.json({ success: true, data: movie });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
   }
-
-  return res.status(404).json({ success: false, message: 'Movie not found' });
 };
-
 
 // @desc    Create a new movie (Admin Only)
 // @route   POST /api/movies
@@ -201,17 +149,9 @@ export const createMovie = async (req, res) => {
       });
     }
 
-      let finalPoster = posterUrl;
-      let finalBanner = bannerUrl;
-      let finalRating = Number(rating) || 7.0;
-
-      // Auto-sync TMDB data if possible
-      try {
-        const tmdbMod = await import('./tmdbController.js');
-        // A simple direct call, or we can fetch via tmdbFetch directly since it's in tmdbController
-        // Since tmdbFetch is not exported, we can just do a quick http call, or we'll skip for brevity if it's too complex. 
-        // Actually, let's just let the user provide URLs for now, as the main DB is synced.
-      } catch(e) {}
+    let finalPoster = posterUrl;
+    let finalBanner = bannerUrl;
+    let finalRating = Number(rating) || 7.0;
 
     const movie = await Movie.create({
       title,
@@ -290,7 +230,6 @@ export const deleteMovie = async (req, res) => {
       return res.status(404).json({ success: false, message: 'Movie not found' });
     }
 
-    // Also delete associated reviews
     await Review.deleteMany({ movie: movie._id });
     await movie.deleteOne();
 

@@ -1,124 +1,87 @@
-import mongoose from 'mongoose';
 import Actor from '../models/Actor.js';
 import Movie from '../models/Movie.js';
-import { getFallbackActors, getFallbackActorById } from '../services/fallbackService.js';
 
 // @desc    Get all actors with search query
 // @route   GET /api/actors
 export const getActors = async (req, res) => {
-  const { search, roleType } = req.query;
+  try {
+    const { search, roleType } = req.query;
+    let query = {};
 
-  if (mongoose.connection.readyState === 1) {
-    try {
-      let query = {};
-
-      if (search && search.trim() !== '') {
-        query.name = new RegExp(search.trim(), 'i');
-      }
-
-      if (roleType && roleType !== 'All') {
-        query.roleType = roleType;
-      }
-
-      const actors = await Actor.find(query).maxTimeMS(4000).sort({ name: 1 });
-
-      // Attach movie counts for quick preview
-      const actorsWithCounts = await Promise.all(
-        actors.map(async (actor) => {
-          const totalMovies = await Movie.countDocuments({
-            'characters.actor': actor._id,
-            title: { $not: /(OG\b|They Call Him OG|HIT.*3|HIT.*Third)/i },
-          });
-          const upcomingCount = await Movie.countDocuments({
-            'characters.actor': actor._id,
-            status: 'Upcoming',
-            title: { $not: /(OG\b|They Call Him OG|HIT.*3|HIT.*Third|Hari\s*Hara|Harihara|Raja\s*Sa+b|Rajasa+b|Mirai|Merai)/i },
-          });
-          return {
-            ...actor.toObject(),
-            totalMovies,
-            upcomingCount,
-          };
-        })
-      );
-
-      return res.json({
-        success: true,
-        count: actorsWithCounts.length,
-        data: actorsWithCounts,
-      });
-    } catch (error) {
-      console.warn('⚠️ MongoDB getActors failed, falling back:', error.message);
+    if (search && search.trim() !== '') {
+      query.name = new RegExp(search.trim(), 'i');
     }
-  }
 
-  const fallbackActors = getFallbackActors({ search, roleType });
-  return res.json({
-    success: true,
-    count: fallbackActors.length,
-    data: fallbackActors,
-    fallback: true,
-  });
+    if (roleType && roleType !== 'All') {
+      query.roleType = roleType;
+    }
+
+    const actors = await Actor.find(query).sort({ name: 1 });
+
+    // Attach movie counts for quick preview
+    const actorsWithCounts = await Promise.all(
+      actors.map(async (actor) => {
+        const totalMovies = await Movie.countDocuments({
+          'characters.actor': actor._id,
+        });
+        const upcomingCount = await Movie.countDocuments({
+          'characters.actor': actor._id,
+          status: 'Upcoming',
+        });
+        return {
+          ...actor.toObject(),
+          totalMovies,
+          upcomingCount,
+        };
+      })
+    );
+
+    res.json({
+      success: true,
+      count: actorsWithCounts.length,
+      data: actorsWithCounts,
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
 };
 
 // @desc    Get single actor by ID with detailed Previous & Upcoming Movies
 // @route   GET /api/actors/:id
 export const getActorById = async (req, res) => {
-  if (mongoose.connection.readyState === 1) {
-    try {
-      const actor = await Actor.findById(req.params.id).maxTimeMS(4000);
+  try {
+    const actor = await Actor.findById(req.params.id);
 
-      if (actor) {
-        // Find all movies featuring this actor
-        const allMovies = await Movie.find({
-          'characters.actor': actor._id,
-          title: { $not: /(OG\b|They Call Him OG|HIT.*3|HIT.*Third)/i },
-        })
-          .maxTimeMS(4000)
-          .populate('streamingPlatforms.platform')
-          .sort({ releaseYear: -1 });
-
-        // Segregate into previous (released) and upcoming movies
-        const releasedRegex = /(Hari\s*Hara|Harihara|Raja\s*Sa+b|Rajasa+b|Mirai|Merai)/i;
-        const previousMovies = allMovies.filter((m) => m.status === 'Released' || releasedRegex.test(m.title));
-        const upcomingMovies = allMovies.filter((m) => m.status === 'Upcoming' && !releasedRegex.test(m.title));
-
-        return res.json({
-          success: true,
-          data: {
-            actor,
-            filmography: {
-              totalCount: allMovies.length,
-              previousMovies,
-              upcomingMovies,
-            },
-          },
-        });
-      }
-    } catch (error) {
-      console.warn('⚠️ MongoDB getActorById failed, falling back:', error.message);
+    if (!actor) {
+      return res.status(404).json({ success: false, message: 'Actor not found' });
     }
-  }
 
-  const fallbackActor = getFallbackActorById(req.params.id);
-  if (fallbackActor) {
-    return res.json({
+    // Find all movies featuring this actor
+    const allMovies = await Movie.find({
+      'characters.actor': actor._id,
+    })
+      .populate('streamingPlatforms.platform')
+      .sort({ releaseYear: -1 });
+
+    // Segregate into previous (released) and upcoming movies
+    const previousMovies = allMovies.filter((m) => m.status === 'Released');
+    const upcomingMovies = allMovies.filter((m) => m.status === 'Upcoming');
+
+    res.json({
       success: true,
       data: {
-        actor: fallbackActor,
+        actor,
         filmography: {
-          totalCount: (fallbackActor.previousMovies?.length || 0) + (fallbackActor.upcomingMovies?.length || 0),
-          previousMovies: fallbackActor.previousMovies || [],
-          upcomingMovies: fallbackActor.upcomingMovies || [],
+          totalCount: allMovies.length,
+          previousMovies,
+          upcomingMovies,
         },
       },
-      fallback: true,
     });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
   }
-
-  return res.status(404).json({ success: false, message: 'Actor not found' });
 };
-
 
 // @desc    Create a new actor (Admin Only)
 // @route   POST /api/actors

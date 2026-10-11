@@ -4,7 +4,6 @@ import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import fs from 'fs';
-import mongoose from 'mongoose';
 import { connectDB } from './config/db.js';
 import authRoutes from './routes/authRoutes.js';
 import movieRoutes from './routes/movieRoutes.js';
@@ -28,15 +27,10 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Database connection & Auto-Seed (Non-blocking background initialization)
-connectDB().then(async (conn) => {
-  if (conn && mongoose.connection.readyState === 1) {
-    await seedInitialDataIfEmpty();
-  }
-}).catch((err) => {
-  console.warn('Background MongoDB connection notice:', err.message);
+// Database connection & Auto-Seed
+connectDB().then(async () => {
+  await seedInitialDataIfEmpty();
 });
-
 
 // API Routes
 app.use('/api/auth', authRoutes);
@@ -92,4 +86,3 @@ app.listen(PORT, () => {
 });
 
 export default app;
-

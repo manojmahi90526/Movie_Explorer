@@ -53,9 +53,9 @@ const MoviesPage = () => {
   // ── Fetch My Collection ────────────────────────────────────────────────
   const [retrying, setRetrying] = useState(false);
 
-  const loadMovies = async (isRetry = false) => {
+  const loadMovies = async () => {
     setLoading(true);
-    if (!isRetry) setErrorMsg(null);
+    setErrorMsg(null);
     try {
       const params = { search: searchQuery, genre: selectedGenre, status: selectedStatus, platform: selectedPlatform, sort: sortOption };
       const res = await fetchMovies(params);
@@ -80,39 +80,12 @@ const MoviesPage = () => {
 
         setMovies(processed);
         setErrorMsg(null);
-
-        // Cache movies for seamless offline / cold-start fallback
-        if (processed.length > 0 && !searchQuery && selectedGenre === 'All' && selectedStatus === 'All' && selectedPlatform === 'All') {
-          try {
-            localStorage.setItem('cinesphere_cached_movies', JSON.stringify(processed));
-          } catch (e) {}
-        }
       }
     } catch (err) {
       console.error('Failed to fetch movies', err);
-      // Check if we have cached movies in localStorage
-      try {
-        const cached = localStorage.getItem('cinesphere_cached_movies');
-        if (cached) {
-          const parsed = JSON.parse(cached);
-          if (Array.isArray(parsed) && parsed.length > 0) {
-            setMovies(parsed);
-            setErrorMsg(null);
-            setLoading(false);
-            setRetrying(false);
-            return;
-          }
-        }
-      } catch (e) {}
-
-      const msg = err.response?.data?.message || err.message || 'Failed to connect to backend API.';
-      setErrorMsg(msg);
-      if (!isRetry && (msg.includes('buffering') || msg.includes('timed out') || msg.includes('connecting'))) {
-        setTimeout(() => loadMovies(true), 2000);
-      }
+      setErrorMsg(err.response?.data?.message || err.message || 'Failed to connect to backend API.');
     } finally {
       setLoading(false);
-      setRetrying(false);
     }
   };
 
@@ -252,16 +225,13 @@ const MoviesPage = () => {
                 If your backend is waking up from sleep (e.g. Render/Atlas cold start), it may take a few moments to establish the database connection.
               </p>
               <button
-                onClick={() => {
-                  setRetrying(true);
-                  loadMovies(true);
-                }}
-                disabled={retrying}
+                onClick={() => loadMovies()}
+                disabled={loading}
                 className="btn btn-primary"
                 style={{ margin: '0 auto', display: 'inline-flex', alignItems: 'center', gap: '8px' }}
               >
-                <RefreshCw size={16} className={retrying ? 'animate-pulse-subtle' : ''} />
-                {retrying ? 'Connecting...' : 'Retry Connection'}
+                <RefreshCw size={16} className={loading ? 'animate-pulse-subtle' : ''} />
+                {loading ? 'Connecting...' : 'Retry Connection'}
               </button>
             </div>
           ) : movies.length > 0 ? (
