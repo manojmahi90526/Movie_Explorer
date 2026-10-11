@@ -22,12 +22,20 @@ export const getMovies = async (req, res) => {
     const { search, genre, status, platform, sort } = req.query;
     let query = {};
 
+    // Ensure OG and HIT 3 are completely removed from the database
+    try {
+      await Movie.deleteMany({
+        title: { $regex: /(OG\b|They Call Him OG|HIT.*3|HIT.*Third)/i }
+      });
+    } catch (e) {}
+
     // Auto-update any previously upcoming movies that are already released
+    const releasedTitlesRegex = /(Hari\s*Hara|Harihara|Raja\s*Sa+b|Rajasa+b|Mirai|Merai)/i;
     try {
       await Movie.updateMany(
         {
           status: 'Upcoming',
-          title: { $in: [/OG/i, /HIT.*3/i, /HIT.*Third/i, /Hari Hara Veera Mallu/i, /Raja Saab/i, /Mirai/i] }
+          title: { $regex: releasedTitlesRegex }
         },
         { $set: { status: 'Released' } }
       );
@@ -37,7 +45,12 @@ export const getMovies = async (req, res) => {
     if (status && status !== 'All') {
       if (status === 'Upcoming') {
         query.status = 'Upcoming';
-        query.title = { $not: /(OG|HIT.*3|HIT.*Third|Hari Hara Veera Mallu|Raja Saab|Mirai)/i };
+        query.title = { $not: releasedTitlesRegex };
+      } else if (status === 'Released') {
+        query.$or = [
+          { status: 'Released' },
+          { title: { $regex: releasedTitlesRegex } }
+        ];
       } else {
         query.status = status;
       }
@@ -84,10 +97,30 @@ export const getMovies = async (req, res) => {
       .sort(sortOptions)
       .lean();
 
+    // In-memory final sanitization:
+    const removeRegex = /(OG\b|They Call Him OG|HIT.*3|HIT.*Third)/i;
+    const releasedTitlesFilter = /(Hari\s*Hara|Harihara|Raja\s*Sa+b|Rajasa+b|Mirai|Merai)/i;
+    let finalMovies = movies.filter((m) => !removeRegex.test(m.title));
+
+    // Ensure Mirai, HHVM, and Raja Saab have status 'Released'
+    finalMovies = finalMovies.map((m) => {
+      if (releasedTitlesFilter.test(m.title)) {
+        return { ...m, status: 'Released' };
+      }
+      return m;
+    });
+
+    // Strict status filtering
+    if (status === 'Upcoming') {
+      finalMovies = finalMovies.filter((m) => m.status === 'Upcoming' && !releasedTitlesFilter.test(m.title));
+    } else if (status === 'Released') {
+      finalMovies = finalMovies.filter((m) => m.status === 'Released' || releasedTitlesFilter.test(m.title));
+    }
+
     res.json({
       success: true,
-      count: movies.length,
-      data: movies,
+      count: finalMovies.length,
+      data: finalMovies,
     });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });

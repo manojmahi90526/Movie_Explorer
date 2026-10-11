@@ -166,7 +166,7 @@ const MovieDetailsModal = ({
                   {movie.rating} / 10
                 </span>
                 {(() => {
-                  const isReleased = movie.status === 'Released' || /(OG|HIT.*3|HIT.*Third|Hari Hara Veera Mallu|Raja Saab|Mirai)/i.test(movie.title);
+                  const isReleased = movie.status === 'Released' || /(OG\b|They Call Him OG|HIT.*3|HIT.*Third|Hari\s*Hara|Harihara|Raja\s*Sa+b|Rajasa+b|Mirai|Merai)/i.test(movie.title);
                   return (
                     <span className={isReleased ? 'badge badge-released' : 'badge badge-upcoming'}>
                       {isReleased ? 'Released' : 'Upcoming'} ({movie.releaseYear})

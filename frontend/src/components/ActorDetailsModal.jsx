@@ -37,14 +37,17 @@ const ActorDetailsModal = ({ actorId, initialActor, onClose, onSelectMovie }) =>
 
   const actor = data?.actor || initialActor;
   const rawFilmography = data?.filmography || { previousMovies: [], upcomingMovies: [] };
-  const releasedRegex = /(OG|HIT.*3|HIT.*Third|Hari Hara Veera Mallu|Raja Saab|Mirai)/i;
+  const releasedRegex = /(Hari\s*Hara|Harihara|Raja\s*Sa+b|Rajasa+b|Mirai|Merai)/i;
+  const removeRegex = /(OG\b|They Call Him OG|HIT.*3|HIT.*Third)/i;
+  const rawPrev = (rawFilmography.previousMovies || []).filter((m) => !removeRegex.test(m.title));
+  const rawUpcoming = (rawFilmography.upcomingMovies || []).filter((m) => !removeRegex.test(m.title));
   const filmography = {
-    totalCount: rawFilmography.totalCount || 0,
+    totalCount: rawPrev.length + rawUpcoming.length,
     previousMovies: [
-      ...(rawFilmography.previousMovies || []),
-      ...(rawFilmography.upcomingMovies || []).filter((m) => releasedRegex.test(m.title)),
+      ...rawPrev,
+      ...rawUpcoming.filter((m) => releasedRegex.test(m.title)),
     ],
-    upcomingMovies: (rawFilmography.upcomingMovies || []).filter((m) => !releasedRegex.test(m.title)),
+    upcomingMovies: rawUpcoming.filter((m) => !releasedRegex.test(m.title)),
   };
 
   if (!actor) return null;

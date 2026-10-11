@@ -144,7 +144,7 @@ const HeroBanner = ({ movies, onSelectMovie }) => {
             <strong>{currentMovie.rating}</strong> / 10
           </span>
           {(() => {
-            const isReleased = currentMovie.status === 'Released' || /(OG|HIT.*3|HIT.*Third|Hari Hara Veera Mallu|Raja Saab|Mirai)/i.test(currentMovie.title);
+            const isReleased = currentMovie.status === 'Released' || /(OG\b|They Call Him OG|HIT.*3|HIT.*Third|Hari\s*Hara|Harihara|Raja\s*Sa+b|Rajasa+b|Mirai|Merai)/i.test(currentMovie.title);
             return (
               <span className={`badge ${isReleased ? 'badge-released' : 'badge-upcoming'}`} style={{ fontFamily: 'Space Grotesk' }}>
                 {currentMovie.releaseYear} • {isReleased ? 'Released' : 'Upcoming'}

@@ -60,19 +60,22 @@ const MoviesPage = () => {
       const params = { search: searchQuery, genre: selectedGenre, status: selectedStatus, platform: selectedPlatform, sort: sortOption };
       const res = await fetchMovies(params);
       if (res.data.success) {
-        const releasedRegex = /(OG|HIT.*3|HIT.*Third|Hari Hara Veera Mallu|Raja Saab|Mirai)/i;
+        const releasedRegex = /(Hari\s*Hara|Harihara|Raja\s*Sa+b|Rajasa+b|Mirai|Merai)/i;
+        const removeRegex = /(OG\b|They Call Him OG|HIT.*3|HIT.*Third)/i;
         
-        let processed = (res.data.data || []).map((m) => {
-          if (m.status === 'Upcoming' && releasedRegex.test(m.title)) {
-            return { ...m, status: 'Released' };
-          }
-          return m;
-        });
+        let processed = (res.data.data || [])
+          .filter((m) => !removeRegex.test(m.title))
+          .map((m) => {
+            if (releasedRegex.test(m.title)) {
+              return { ...m, status: 'Released' };
+            }
+            return m;
+          });
 
         if (selectedStatus === 'Upcoming') {
-          processed = processed.filter((m) => m.status === 'Upcoming');
+          processed = processed.filter((m) => m.status === 'Upcoming' && !releasedRegex.test(m.title));
         } else if (selectedStatus === 'Released') {
-          processed = processed.filter((m) => m.status === 'Released');
+          processed = processed.filter((m) => m.status === 'Released' || releasedRegex.test(m.title));
         }
 
         setMovies(processed);

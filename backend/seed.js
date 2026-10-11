@@ -2094,25 +2094,7 @@ export const seedDatabase = async (force = false) => {
           { platform: prime, watchUrl: 'https://www.primevideo.com', subscriptionType: 'Theatrical' },
         ],
       },
-      {
-        title: 'OG (They Call Him OG)',
-        posterUrl: 'https://upload.wikimedia.org/wikipedia/en/0/0c/OG_Poster.jpg',
-        bannerUrl: 'https://images.unsplash.com/photo-1514565131-fce0801e5785?auto=format&fit=crop&w=1920&q=80',
-        trailerUrl: 'https://www.youtube.com/watch?v=Gj9qA1YkQ2U',
-        releaseDate: new Date('2025-09-25'),
-        releaseYear: 2025,
-        status: 'Released',
-        genre: ['Action', 'Crime', 'Thriller'],
-        duration: 'TBA',
-        rating: 9.6,
-        briefStory: 'A legendary Japanese katana-wielding underworld crime boss returns to the Mumbai mafia circuit after a decade in exile to eradicate an international syndicate and protect his past allegiances.',
-        characters: [
-          { characterName: 'Ojas Gambheera (OG)', actor: pawan, isLead: true },
-        ],
-        streamingPlatforms: [
-          { platform: netflix, watchUrl: 'https://www.netflix.com', subscriptionType: 'Theatrical' },
-        ],
-      },
+
       {
         title: 'The Raja Saab',
         posterUrl: 'https://upload.wikimedia.org/wikipedia/en/9/9e/The_RajaSaab_poster.jpg',
@@ -2132,25 +2114,7 @@ export const seedDatabase = async (force = false) => {
           { platform: prime, watchUrl: 'https://www.primevideo.com', subscriptionType: 'Theatrical' },
         ],
       },
-      {
-        title: 'HIT: The 3rd Case',
-        posterUrl: 'https://upload.wikimedia.org/wikipedia/en/0/09/HIT_-_The_Third_Case.jpg',
-        bannerUrl: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1920&q=80',
-        trailerUrl: 'https://www.youtube.com/watch?v=DY_k9jN78pM',
-        releaseDate: new Date('2025-05-01'),
-        releaseYear: 2025,
-        status: 'Released',
-        genre: ['Action', 'Crime', 'Thriller'],
-        duration: 'TBA',
-        rating: 9.5,
-        briefStory: 'An uncompromising and ruthless police officer from the special Homicide Intervention Team tackles an elusive interstate serial killer syndicate that operates across national borders with chilling precision.',
-        characters: [
-          { characterName: 'Arjun Sarkaar IPS', actor: nani, isLead: true },
-        ],
-        streamingPlatforms: [
-          { platform: netflix, watchUrl: 'https://www.netflix.com', subscriptionType: 'Theatrical' },
-        ],
-      },
+
       {
         title: 'Vishwaambhara',
         posterUrl: 'https://upload.wikimedia.org/wikipedia/en/9/9f/Vishwambhara_concept_poster.jpg',
